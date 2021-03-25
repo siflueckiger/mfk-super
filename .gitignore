@@ -1,6 +1,12 @@
 
 Fotos/
 
+super-camera/__pycache__
+
+super-camera/env
+
+super-camera/mfk-super-share
+
 PIPELINE/ApplyMask/data/
 
 PIPELINE/ApplyMask/ApplyMask.pde
