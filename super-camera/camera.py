@@ -11,7 +11,7 @@ import datetime
 
 # --- SETTINGS ---
 button_pin = 15
-save_path = 'mfk-super-share/'
+save_path = 'mfk-share/'
 overlay_path = 'overlay-images/'
 waiting_time_countdown = 0.6
 waiting_time_after_capture = 2
