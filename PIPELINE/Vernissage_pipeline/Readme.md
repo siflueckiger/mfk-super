@@ -53,16 +53,20 @@ Terminal -> nvtop
 
 # Todos
 
-- Photobox bauen (Flügu) Ende März-> jaja
+- Photobox bauen (Flügu) Ende März
+	- erledigt
 - Backup auf HD (Flügu) sofort
 - Zeugs auf Dropbox oder GIT ohne 50GB (Flügu) sofort
-- Preview beim Buzzer mit overlay (Flügu) Ende März -> Done
+	- github erldigt
+- Preview beim Buzzer mit overlay (Flügu) Ende März
+	- erledigt
 - Ni an Diashow erinnern (Flügu) Mitte April
 - Buzzer antirutsch (Flügu)  -> Teppich klepebeand
 - Diashow (Ni) Mitte April 
   - Skalierung möglich vergössern max. oder in prozent einstellen
   - bsp wenn X min nichts passiert random aus allen fotos sonst die neusten Y oder so
-- Pipeline handler (Ni)  -> Done
+- Pipeline handler (Ni) 
+	- erledigt
 
 # 
 

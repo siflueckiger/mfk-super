@@ -30,7 +30,7 @@ Terminal -> nvtop
 
 # Vernissage Pipeline
 
-* Color Historram Transfert zwischen Background und Foreground
+* Color Histogram Transfer zwischen Background und Foreground
   * Haben wir jetzt mit Colorgrading manuel gelöst
 * Error: Gibt kein Errorchecking 
   * Ist implementiert, noch testen
