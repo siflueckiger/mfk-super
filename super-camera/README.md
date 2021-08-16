@@ -1,4 +1,8 @@
 # Readme
+
+## TODO
+- Make bash script for starting camera
+
 ## Install resources
 ### Python
 Create virtual environment and activate it
@@ -37,6 +41,10 @@ create user and start samba
     sudo smbpasswd -a pi
     sudo /etc/init.d/samba restart
 
+username: pi
+pw: Ramba2000! 
+
 ### Open CV
+
 https://www.pyimagesearch.com/2019/09/16/install-opencv-4-on-raspberry-pi-4-and-raspbian-buster/
 

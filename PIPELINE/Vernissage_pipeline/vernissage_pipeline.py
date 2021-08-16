@@ -24,22 +24,25 @@ class Pipeline:
         #imgs = os.listdir(dropDir) 
         this.dropDir = drpDir
         this.inputDir = inpDir
-        this.imgs = os.listdir(this.dropDir)
+        this.updateImgs()
         this.outputDir = outpDir
 
+    def updateImgs(this):
+        this.imgs = os.listdir(this.dropDir)
 
     def run(this):
 
         then = time.time()
         this.MoveImagesToPipeline()
-        this.MoveImagesToRaw()
-        this.CleanUp()
+        #this.CleanUp()
         print("############ Starting Pipeline ############")
 
         this.GenerateMask()
         this.StyleTransfert()
         this.ApplyMask()
-        #this.CleanUp()
+        this.CleanUp()
+        this.MoveImagesToRaw()
+
 
         now = time.time()
 
@@ -56,14 +59,21 @@ class Pipeline:
     def MoveImagesToPipeline(this):
 
         #print("############ There are : ", len(imgs)," images available. Moving 10 of em.")
-        """
+        this.updateImgs()
         for i in this.imgs:
-            shutil.move(this.dropDir+i, this.inputDir+i)
+            if i.startswith("tmp_"):
+                print("Temp Files " + i)
+            else:
+                print("Copie files " + i)
+                shutil.copy(this.dropDir+i, this.inputDir+i)
+                os.remove(this.dropDir+i)
+        
         """
         try:
             subprocess.check_call("mv  "+this.dropDir+"/* "+this.inputDir, shell=True)
         except subprocess.CalledProcessError:
             sys.exit("An error occured while copying the images from the shared Directory to the Pipeline..")
+        """
         this.imgs = os.listdir(this.inputDir)
 
         print("############The following images were passed to the pipeline...")
@@ -73,7 +83,7 @@ class Pipeline:
     
     def MoveImagesToRaw(this):
         try:
-            subprocess.check_call("cp -r "+this.inputDir+"* ./raw/", shell=True)
+            subprocess.check_call("mv "+this.inputDir+"* ./raw/", shell=True)
         except subprocess.CalledProcessError:
             sys.exit("An error occured while copying the images to the raw dir.")
 
@@ -83,6 +93,7 @@ class Pipeline:
 
         print("########## Cleaning Up Pipeline\n")
         mask = os.listdir(this.maskDir)
+        print(mask)
         if len(mask) > 0:
             try: 
                 subprocess.check_call("rm -r ./1.Mask/*", shell=True)
@@ -90,6 +101,7 @@ class Pipeline:
                 sys.exit("There was an error, while cleaning up maksDir.")
 
         style = os.listdir(this.styleTransfertDir)
+        print(style)
         if (len(style) > 0):
             try: 
                 subprocess.check_call("rm -r ./2.StyleTransfert/*", shell=True)
@@ -97,6 +109,7 @@ class Pipeline:
                 sys.exit("There was an error, while cleaning up StyleTransfetDir")
 
         apply = os.listdir(this.applyMaskDir)
+        print(apply)
         if (len(apply) > 0):
             try: 
                 subprocess.check_call("rm -r ./3.ApplyMask/*", shell=True)
@@ -232,6 +245,13 @@ class Pipeline:
 
         subprocess.call("cp "+ ApplyedMaskOutputDir + "/* " + this.outputDir, shell=True)
 
+    def countImages(this,imgs):
+        n = 0
+        for img in imgs:
+            if not img.startswith("tmp_"):
+                n+=1
+        return n
+
     def handle(this):
         cond = False
         then = time.time()-55
@@ -246,9 +266,10 @@ class Pipeline:
                 print("Waiting for images...          ",end = "\r")
             else:
                 print("Starting pipeline in {}".format(round(60.-elapsed,3)),end='\r')
-            cond = len(imgs) >= 1 and elapsed > 60
+            cond = this.countImages(imgs) >= 1 and elapsed > 60
             #print(cond)
             if cond:
+                time.sleep(3)
                 this.run()
                 then = time.time()
 

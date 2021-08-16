@@ -10,7 +10,8 @@ from gluoncv import model_zoo
 from gluoncv.utils.viz import get_color_pallete
 
 
-ctx = mx.gpu(0)
+#ctx = mx.gpu(1)
+ctx = mx.cpu()
 
 #Load model
 model = model_zoo.get_model('fcn_resnet101_voc', pretrained=True, ctx=ctx)

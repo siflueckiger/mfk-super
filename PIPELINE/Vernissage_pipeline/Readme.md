@@ -26,30 +26,53 @@ Terminal -> nvtop
 
   ### Material
   
+* **Noch Kaufen**
+
+    * schwarzes Ducktape
+
 * Photostation
 
-   * Photobox mit raspberry pi netzstecker
-   * TV
-   * HDMI Kabel kurz
-   * Buzzer
-   * Steckleiste mind. 4
+   * MFK
+      * Tisch
+      * Licht
+      * Stuhl
+   * MRT
+      * ~~Photobox mit Raspberry Pi netzstecker~~
+      * ~~TV gross~~
+      * ~~HDMI Kabel kurz~~
+      * ~~Buzzer~~
+      * ~~Steckleiste mind. 4 Stecker~~
+      * ~~Molton~~
 
  * Büro
 
-    * Lenovo Laptop und Netzstecker, Etherner Adapter?
-    * ext. GPU inkl alle Kabel
-    * Router inkl Netzstecker
-    * Bürolampe
+     * MFK
+         * Tisch
+         * zwei Stühle
+     * MRT
+        * Lenovo Laptop und Netzstecker, Ethernet Adapter?
+        * ext. GPU inkl alle Kabel
+        * Router inkl Netzstecker
+        * ~~Bürolampe schwarze Klemmlampe~~
+        * ~~Sticker~~
+        * ~~Visitenkarte~~
+
+* Fotodisplay
+
+    * MFK
+        * grosser TV	
+    * MRT
+        * ~~HDMI-Kabel lang sehr lang~~
 
 * Diverses
 
-  * HDMI Kabel mind. 10 Meter
-  * Ethernerkabel 1x lang 1x kurz
-  * Farbiges Klebeband für Markierungen Wand und Boden
-   * Verlängerungskabel
-   * Zweifachstecker
-   * Ducktape
-   * Kabelbinder
+  * ~~Ethernerkabel 1x lang 1x kurz~~
+  * ~~Farbiges Klebeband für Markierungen Wand und Boden~~
+   * ~~Verlängerungskabel~~
+   * ~~Zweifachstecker~~
+   * **Ducktape**
+   * ~~Kabelbinder~~
+   * ~~Klebeband~~
 
 # Todos
 
