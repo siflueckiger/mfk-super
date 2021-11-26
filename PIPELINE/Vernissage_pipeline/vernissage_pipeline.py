@@ -261,12 +261,12 @@ class Pipeline:
             now = time.time()
             elapsed = (now-then)
 
-            if elapsed > 60: 
+            if elapsed > 5: 
                 #elapsed = 0
                 print("Waiting for images...          ",end = "\r")
             else:
                 print("Starting pipeline in {}".format(round(60.-elapsed,3)),end='\r')
-            cond = this.countImages(imgs) >= 1 and elapsed > 60
+            cond = this.countImages(imgs) >= 1 and elapsed > 5
             #print(cond)
             if cond:
                 time.sleep(3)
