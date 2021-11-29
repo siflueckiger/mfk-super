@@ -4,12 +4,12 @@ import argparse
 import qrcode
 import pyshorteners
 
-s = pyshorteners.Shortener()
+
+shortener = pyshorteners.Shortener()
 
 parser = argparse.ArgumentParser(description='Generate an image from a phrase using VQGAN')
 parser.add_argument('-qr', '--qr_string', type=str, metavar="", required=True, help='String for QR-Code')
 args = parser.parse_args()
-
 
 
 # generate image
@@ -47,25 +47,26 @@ addText('by Magic Ramba Trash', 85, h2, 'black')
 # generate qr-code
 link = 'https://giphy.com/gifs/reactionseditor-yes-awesome-3ohzdIuqJoo8QdKlnW/fullscreen'
 generateQRCode(link)
+
 # paste qr-code
 xPos = int((W - 450) / 2)
 img.paste(qr_img, (xPos, 195))
 
+# add short url (qr-code-link)
+short_link = shortener.tinyurl.short(link)
+print(short_link)
+addText(short_link, 620, footer, 'black')
+
 addText('DEIN BILD | TA PHOTO | YOUR PICTURE', 150, p, 'black')
 date = datetime.today().strftime('%d.%m.%Y - %H:%M:%S')
 addText(date, 180, p, 'black')
-
-short_link = s.tinyurl.short(link)
-print(short_link)
-addText(short_link, 620, footer, 'black')
 
 # footer
 addText('www.mfk.ch', 730, footer, 'black')
 addText('www.magicrambatrash.ch', 760, footer, 'black')
 
 # save image
-#date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
-#filename = date + '_MfK-Super-Foto.png'
-#img.save(filename)
-qr_img.save('qr.png')
-img.save('test.png')
+date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
+filename = date + '_MfK-Super-Foto.png'
+img.save(filename)
+
