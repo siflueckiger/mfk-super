@@ -1,16 +1,22 @@
+# TODO:
+# Zeit in Filname und auf Quittung die selbe
+
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
+from escpos.printer import Usb
 import argparse
 import qrcode
 import pyshorteners
 
-
+# init url shortener
 shortener = pyshorteners.Shortener()
 
-parser = argparse.ArgumentParser(description='Generate an image from a phrase using VQGAN')
+# init printer
+printer = Usb(0x04b8,0x0e28,0)
+
+parser = argparse.ArgumentParser(description='Print a receipt with a qr code to image for mfk-super')
 parser.add_argument('-qr', '--qr_string', type=str, metavar="", required=True, help='String for QR-Code')
 args = parser.parse_args()
-
 
 # generate image
 COLOR_MODE = 'RGB'
@@ -36,16 +42,17 @@ def generateQRCode(link):
     global qr_img
     qr_img = qr.make_image(fill_color="black", back_color="white")
 
-
 # add content
 draw = ImageDraw.Draw(img)
+
 # header
 addText('MfK-Super-KI-Foto', 30, h1, 'black')
 addText('by Magic Ramba Trash', 85, h2, 'black')
 
 # main content
 # generate qr-code
-link = 'https://giphy.com/gifs/reactionseditor-yes-awesome-3ohzdIuqJoo8QdKlnW/fullscreen'
+# link = 'https://giphy.com/gifs/reactionseditor-yes-awesome-3ohzdIuqJoo8QdKlnW/fullscreen'
+link = args.qr_string
 generateQRCode(link)
 
 # paste qr-code
@@ -54,7 +61,7 @@ img.paste(qr_img, (xPos, 195))
 
 # add short url (qr-code-link)
 short_link = shortener.tinyurl.short(link)
-print(short_link)
+print('short url: ' + short_link)
 addText(short_link, 620, footer, 'black')
 
 addText('DEIN BILD | TA PHOTO | YOUR PICTURE', 150, p, 'black')
@@ -69,4 +76,9 @@ addText('www.magicrambatrash.ch', 760, footer, 'black')
 date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
 filename = date + '_MfK-Super-Foto.png'
 img.save(filename)
+print('Filename: ' + filename)
 
+# print image
+printer.image(filename, impl='graphics')
+printer.cut()
+print('File %s printed.' % filename)
