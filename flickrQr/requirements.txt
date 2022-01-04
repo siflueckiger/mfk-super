@@ -1,5 +1,5 @@
 flickrapi
-webbrowser
+#webbrowser
 qrcode
 lxml
 opencv-python
