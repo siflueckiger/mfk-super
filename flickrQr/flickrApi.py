@@ -25,27 +25,22 @@ def callback(progress):
     print("Uploading {} %".format(progress), end="\r")  
 
 
-def initFlickr(api_key, api_secret):
+class Flickr:
 
-    flickr = flickrapi.FlickrAPI(api_key, api_secret, format="parsed-json")
-    # Only do this if we don't have a valid token already
-    if not flickr.token_valid(perms='write'):
+    def __init__(self, api_key, api_secret):
 
-        # Get a request token
-        flickr.get_request_token(oauth_callback='oob')
+        api = flickrapi.FlickrAPI(api_key, api_secret, format="parsed-json")
+        if not api.token_valid(perms='write'):
 
-        # Open a browser at the authentication URL. Do this however
-        # you want, as long as the user visits that URL.
-        authorize_url = flickr.auth_url(perms='write')
-        webbrowser.open_new_tab(authorize_url)
+            api.get_request_token(oauth_callback='oob')
 
-        # Get the verifier code from the user. Do this however you
-        # want, as long as the user gives the application the code.
-        verifier = str(input('Verifier code: '))
+            authorize_url = api.auth_url(perms='write')
+            webbrowser.open_new_tab(authorize_url)
 
-        # Trade the request token for an access token
-        flickr.get_access_token(verifier)
-    return(flickr)
+            verifier = str(input('Verifier code: '))
+
+            api.get_access_token(verifier)
+        self.api = api
 
 if __name__ == "__main__":
     import time
@@ -63,12 +58,12 @@ if __name__ == "__main__":
     cv2.imwrite("./test.png", image)
 
     print("Flicker Authentication")
-    flickr = initFlickr(api_key, api_secret)
-    resp = flickr.photos.getInfo(photo_id='7658567128')
+    flickr = Flickr(api_key, api_secret)
+    resp = flickr.api.photos.getInfo(photo_id='7658567128')
 
     fileobj = FileWithCallback("./placeholder.png", callback)
 
-    resp = flickr.upload("Test", fileobj, format="etree")
+    resp = flickr.api.upload("Test", fileobj, format="etree")
     print()
 
     resp=etree.tostring(resp).decode('UTF-8')
@@ -76,7 +71,7 @@ if __name__ == "__main__":
     match = re.search(pattern, resp)
     id = match.group(1)
 
-    resp=flickr.photos.getInfo(photo_id = id, format = "etree")
+    resp = flickr.api.photos.getInfo(photo_id = id, format = "etree")
 
 
     for urls in resp.iter('urls'):
@@ -92,7 +87,7 @@ if __name__ == "__main__":
 
     if (input("replace placeholder with processed image?")!=0):
         fileobj = FileWithCallback("./test.png", callback)
-        resp = flickr.replace(filename="./test.png",photo_id=id, fileobj=fileobj, format="etree")
+        resp = flickr.api.replace(filename="./test.png",photo_id=id, fileobj=fileobj, format="etree")
         print()
         print("Image replaced.")
         print(etree.tostring(resp, encoding='utf8').decode('utf8'))
