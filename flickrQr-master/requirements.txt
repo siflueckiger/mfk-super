@@ -1,5 +1,0 @@
-flickrapi
-webbrowser
-qrcode
-lxml
-opencv-python
