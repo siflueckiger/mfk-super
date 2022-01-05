@@ -2,7 +2,7 @@ import flickrapi
 import webbrowser
 import os.path
 import re
-import qrcode 
+import lxml.etree as etree
 
 
 
@@ -41,12 +41,46 @@ class Flickr:
 
             api.get_access_token(verifier)
         self.api = api
+    
+    def getInfo(self, id):
+        resp = self.api.photos.getInfo(photo_id=id)
+        print(resp)
+
+    def upload(self, filename):
+        fileobj = FileWithCallback(filename, callback)
+        resp = self.api.upload("Test", fileobj, format="etree")
+        resp=etree.tostring(resp).decode('UTF-8')
+        pattern = r'.*?photoid>(.*)<.*'
+        match = re.search(pattern, resp)
+        id = match.group(1)
+        return(id)
+
+    def putPlaceholder(self):
+        id = self.upload("./placeholder.png")
+        return(id)
+
+    def replace(self, filename, id ):
+        fileobj = FileWithCallback("./test.png", callback)
+        resp = self.api.replace(filename="./test.png",photo_id=id, fileobj=fileobj, format="etree")
+        return(resp)
+
+    def getUrl(self, id):
+        resp = self.api.photos.getInfo(photo_id = id, format = "etree")
+
+        for urls in resp.iter('urls'):
+            for u in urls.iter('url'):    
+                photoUrl = u.text
+        return(photoUrl)
+
+
 
 if __name__ == "__main__":
     import time
     import cv2
     import lxml.etree as etree
     from config import api_secret, api_key
+    import qrcode
+
     #import xml.etree.ElementTree as ET
 
 
@@ -59,39 +93,22 @@ if __name__ == "__main__":
 
     print("Flicker Authentication")
     flickr = Flickr(api_key, api_secret)
-    resp = flickr.api.photos.getInfo(photo_id='7658567128')
 
-    fileobj = FileWithCallback("./placeholder.png", callback)
+    id = flickr.upload("./flickrQr/placeholder.png")
 
-    resp = flickr.api.upload("Test", fileobj, format="etree")
-    print()
+    print(id)
 
-    resp=etree.tostring(resp).decode('UTF-8')
-    pattern = r'.*?photoid>(.*)<.*'
-    match = re.search(pattern, resp)
-    id = match.group(1)
+    photoUrl = flickr.getUrl(id)
 
-    resp = flickr.api.photos.getInfo(photo_id = id, format = "etree")
-
-
-    for urls in resp.iter('urls'):
-        for u in urls.iter('url'):    
-            photoUrl = u.text
-    
     print(photoUrl)
-    
     print("Make QR-Code")
-    
+
     img = qrcode.make(photoUrl)
     img.show()
 
     if (input("replace placeholder with processed image?")!=0):
-        fileobj = FileWithCallback("./test.png", callback)
-        resp = flickr.api.replace(filename="./test.png",photo_id=id, fileobj=fileobj, format="etree")
+        resp = flickr.replace("./test.png", id)
+        print(etree.tostring(resp, encoding='utf8').decode('utf8'))
         print()
         print("Image replaced.")
-        print(etree.tostring(resp, encoding='utf8').decode('utf8'))
-
-    #print('First set title: %s' % title)
-    ##print(etree.tostring(resp, pretty_print = True))
 
