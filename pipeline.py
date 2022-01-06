@@ -5,8 +5,8 @@ import subprocess
 import sys
 import time
 
-from flickrQr.config import api_secret, api_key
-from flickrQr.flickrApi import Flickr
+from flickr.config import api_secret, api_key
+from flickr.flickrApi import Flickr
 
 from pipeline.image_segmentation import ImageSegmentation
 
@@ -19,9 +19,9 @@ def makdirIfnotExists(dirName):
 
 
 class Pipeline:
-    maskDir = "./1.Mask/"
-    styleTransfertDir = "./2.StyleTransfert/"
-    applyMaskDir = "./3.ApplyMask/"
+    maskDir = "./pipeline/1.Mask/"
+    styleTransfertDir = "./pipeline/2.StyleTransfert/"
+    applyMaskDir = "./pipeline/3.ApplyMask/"
 
 
     def __init__(self,inpDir, drpDir, outpDir, simulate = False):
@@ -141,8 +141,8 @@ class Pipeline:
     def GenerateMask(self):
         print("############ 1. Mask ############ ")
 
-        maskDirInput = "./1.Mask/Input/"
-        maskDirOutput = "./1.Mask/Output/"
+        maskDirInput = self.maskDir + "/Input/"
+        maskDirOutput = self.maskDir + "./1.Mask/Output/"
 
         imageSegmentation = ImageSegmentation(maskDirInput, maskDirOutput)
 
@@ -295,8 +295,9 @@ class Pipeline:
 def main():
 
     DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" # where the new images need to go
-    INPUTDIR =  "./input/" # move to input dir to start prcdocessing
-    OUTPUTDIR = "./output/" # result of whole pipeline
+    DROP = "./pipeline/drop/"
+    INPUTDIR =  "./pipeline/input/" # move to input dir to start prcdocessing
+    OUTPUTDIR = "./pipeline/output/" # result of whole pipeline
 
     pipeline = Pipeline(INPUTDIR, DROP, OUTPUTDIR, simulate=True)
 

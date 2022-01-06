@@ -60,8 +60,8 @@ class ImageSegmentation:
 
 if __name__ == "__main__":
 
-  inputDir = "../Vernissage_pipeline/1.Mask/Input/"
-  outputDir = "../Vernissage_pipeline/1.Mask/Output/"
+  inputDir = "./1.Mask/Input/"
+  outputDir = "./1.Mask/Output/"
   imageSegemntator = ImageSegmentation(inputDir, outputDir)
   imageSegemntator.run()
 
