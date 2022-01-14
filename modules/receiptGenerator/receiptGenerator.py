@@ -36,7 +36,7 @@ def addText(text, posY, myFont, color):
     draw.text(((W-w)/2, posY), text, fill=color, font=myFont)
 
 def generateQRCode(link):
-    qr = qrcode.QRCode()
+    qr = qrcode.QRCode(box_size=15)
     qr.add_data(link)
     qr.make()
     global qr_img
