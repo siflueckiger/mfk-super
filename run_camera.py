@@ -10,9 +10,8 @@ import cv2
 
 
 # ---- MODULES ----
-import camera.camera as Camera
 from modules.button.button import Button
-import modules.printer.printer as Printer
+from modules.printer.printer import receiptPrinter
 import modules.flickr.flickr as Flickr
 
 
@@ -83,6 +82,9 @@ def CAMERA_COUNTDOWN_AND_TAKE_IMAGE():
     image = rawCapture.array 
     savepath = SHARE_IMAGE_FILEPATH + filename + ".png"
     cv2.imwrite(savepath, image)
+
+    cprint.info('---> PRINT QR CODE')
+    printer.print('www.srf.ch')
     
     cprint('load after capture image')
     CAMERA_LOAD_OVERLAY(savepath)
@@ -100,6 +102,8 @@ if __name__ == '__main__':
     button = Button()
     button.initGpioPin()
 
+    printer = receiptPrinter()
+
     wait(DEBUG_WAIT_TIME)
 
     cprint.info('---> CONNECTING TO FLICKR API')
@@ -109,7 +113,7 @@ if __name__ == '__main__':
     
     cprint.info('---> INIT CAMERA')
     with picamera.PiCamera() as camera:
-        camera.resolution = (1920, 1080)
+        camera.resolution = (1920, 1088) # 1088 because: https://stackoverflow.com/questions/60989671/white-blue-balance-error-in-high-resolution-with-opencv-and-picamera-v2
         camera.framerate = 15
         camera.sensor_mode = 2
         camera.rotation = 0
@@ -140,9 +144,3 @@ if __name__ == '__main__':
 
                     # START CAMERA COUNTDOWN
                     CAMERA_COUNTDOWN_AND_TAKE_IMAGE()
-
-
-                    Printer.generateImage('www.mrt.ch')
-                    wait(DEBUG_WAIT_TIME)
-                    Printer.printImage('2022-01-04_230054_Super.png')
-                    wait(DEBUG_WAIT_TIME)
