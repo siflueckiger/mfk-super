@@ -41,6 +41,7 @@ def generateQRCode(link):
     qr.make()
     global qr_img
     qr_img = qr.make_image(fill_color="black", back_color="white")
+    print(qr_img.size)
 
 # add content
 draw = ImageDraw.Draw(img)
@@ -60,6 +61,7 @@ xPos = int((W - 450) / 2)
 img.paste(qr_img, (xPos, 195))
 
 # add short url (qr-code-link)
+print('original url: ' + link)
 short_link = shortener.tinyurl.short(link)
 print('short url: ' + short_link)
 addText(short_link, 620, footer, 'black')
