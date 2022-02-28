@@ -128,7 +128,9 @@ if __name__ == '__main__':
             cprint.info('---> CAMERA STREAM RUNNING')
 
             # FLICKR PLACEHOLDER
+            cprint.warn('upload placeholder image to flickr')
             placeholderID = flickr.putPlaceholder()
+            cprint.warn('get url from placeholder image')
             imgurl = flickr.getUrl(placeholderID)
             
             # TAKE IMAGE LOOP
@@ -138,7 +140,7 @@ if __name__ == '__main__':
 
                 # WAIT FOR USER INPUT
                 if (button.waitForUserInput() == True):
-                    filename = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S_mfk-super_id" + placeholder)
+                    filename = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S_mfk-super_id" + placeholderID)
                     cprint('Button pressed')
 
                     # START CAMERA COUNTDOWN
