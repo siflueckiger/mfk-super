@@ -117,3 +117,8 @@ PIPELINE/fast-style-transfer/wpa_supplicant.conf
 flickrQr/config.py
 *.png
 *.pyc
+
+
+
+
+!placeholder.png
