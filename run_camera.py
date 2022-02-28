@@ -71,7 +71,7 @@ def show_countdown_overlay(countdown_image):
     CAMERA_LOAD_OVERLAY(OVERLAY_IMAGE_PATH + countdown_image)
     wait(WAITING_TIME_CONTDOWN)
 
-def CAMERA_COUNTDOWN_AND_TAKE_IMAGE():
+def CAMERA_COUNTDOWN_AND_TAKE_IMAGE(qr_url):
     show_countdown_overlay('drei.png')
     show_countdown_overlay('zwei.png')
     show_countdown_overlay('eins.png')
@@ -85,7 +85,7 @@ def CAMERA_COUNTDOWN_AND_TAKE_IMAGE():
     cv2.imwrite(savepath, image)
 
     cprint.info('---> PRINT QR CODE')
-    printer.print('www.srf.ch')
+    printer.print(qr_url)
     
     cprint('load after capture image')
     CAMERA_LOAD_OVERLAY(savepath)
@@ -138,14 +138,8 @@ if __name__ == '__main__':
 
                 # WAIT FOR USER INPUT
                 if (button.waitForUserInput() == True):
-                    filename = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S_mfk-super")
+                    filename = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S_mfk-super_id" + placeholder)
                     cprint('Button pressed')
 
-
-                    # FLICKR PLACEHOLDER
-                    Flickr.uplpoadPlaceholderImage('placeholder.png')
-                    Flickr.getPlaceholderImageURL()
-
-
                     # START CAMERA COUNTDOWN
-                    CAMERA_COUNTDOWN_AND_TAKE_IMAGE()
+                    CAMERA_COUNTDOWN_AND_TAKE_IMAGE(imgurl)
