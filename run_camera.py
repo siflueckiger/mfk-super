@@ -13,6 +13,8 @@ import cv2
 from modules.button.button import Button
 from modules.printer.printer import receiptPrinter
 import modules.flickr.flickr as Flickr
+from modules.flickr import flickrApi
+from config import api_key, api_secret
 
 
 
@@ -107,7 +109,7 @@ if __name__ == '__main__':
     wait(DEBUG_WAIT_TIME)
 
     cprint.info('---> CONNECTING TO FLICKR API')
-    Flickr.connect2API()
+    flickr = flickrApi.Flickr(api_key, api_secret)
     
     wait(DEBUG_WAIT_TIME)
     
@@ -125,6 +127,10 @@ if __name__ == '__main__':
         while True:
             camera.start_preview()
             cprint.info('---> CAMERA STREAM RUNNING')
+
+            # FLICKR PLACEHOLDER
+            placeholderID = flickr.putPlaceholder()
+            imgurl = flickr.getUrl(placeholderID)
             
             # TAKE IMAGE LOOP
             while True:
