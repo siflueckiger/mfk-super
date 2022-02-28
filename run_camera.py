@@ -12,7 +12,6 @@ import cv2
 # ---- MODULES ----
 from modules.button.button import Button
 from modules.printer.printer import receiptPrinter
-import modules.flickr.flickr as Flickr
 from modules.flickr import flickrApi
 from config import api_key, api_secret
 
