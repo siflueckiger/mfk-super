@@ -93,8 +93,7 @@ if __name__ == "__main__":
 
     print("Flicker Authentication")
     flickr = Flickr(api_key, api_secret)
-
-    id = flickr.upload("./flickrQr/placeholder.png")
+    id = flickr.putPlaceholder()
 
     print(id)
 

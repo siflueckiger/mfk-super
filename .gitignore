@@ -117,3 +117,10 @@ PIPELINE/fast-style-transfer/wpa_supplicant.conf
 flickrQr/config.py
 *.png
 *.pyc
+
+pipeline/input
+pipeline/output
+pipeline/1.Mask/
+pipeline/1.ApplyMask/
+
+.vscode

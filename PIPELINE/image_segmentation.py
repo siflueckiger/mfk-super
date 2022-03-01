@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import listdir, remove
+import os
 
 import mxnet as mx
 from mxnet import image
@@ -24,7 +24,7 @@ class ImageSegmentation:
     self.model = model_zoo.get_model('fcn_resnet101_voc', pretrained=True, ctx=self.ctx)
     self.inputDir = inputDir
     self.outputDir = outputDir
-    self.imgs = listdir(inputDir)
+    self.imgs = os.listdir(inputDir)
   
   def _processImages(self):
 
@@ -45,7 +45,7 @@ class ImageSegmentation:
   
   def _cleanUp(self):
     for im_fname in self.imgs:
-      remove(inputDir + im_fname)
+      os.remove(inputDir + im_fname)
 
   def run(self):
     """Processes a set of Images.
@@ -60,8 +60,12 @@ class ImageSegmentation:
 
 if __name__ == "__main__":
 
+  
   inputDir = "./1.Mask/Input/"
   outputDir = "./1.Mask/Output/"
+  os.makedirs(inputDir)
+  os.makedirs(outputDir)
+  os.popen("cp ./input/* "+inputDir)
   imageSegemntator = ImageSegmentation(inputDir, outputDir)
   imageSegemntator.run()
 

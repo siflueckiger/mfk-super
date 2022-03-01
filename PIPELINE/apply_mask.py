@@ -42,12 +42,12 @@ class ApplyMask:
 if __name__ == "__main__":
     
     #maskDir = "./MaskInput/"
-    maskDir = "../Vernissage_pipeline/3.ApplyMask/MaskInput/"
+    maskDir = "../pipeline/3.ApplyMask/MaskInput/"
     #styledDir = "./StyledInput/"
-    styledDir = "../Vernissage_pipeline/3.ApplyMask/StyledInput/"
+    styledDir = "../pipeline/3.ApplyMask/StyledInput/"
     #backgroundDir = "../backgroundImages/"
-    backgroundDir = "../Vernissage_pipeline/backgroundImages/selected/"
-    outputDir = "../Vernissage_pipeline/3.ApplyMask/Output/"
+    backgroundDir = "../pipeline/backgroundImages/selected/"
+    outputDir = "../pipeline/3.ApplyMask/Output/"
 
     applyMask = ApplyMask(maskDir, styledDir, backgroundDir, outputDir)
     
