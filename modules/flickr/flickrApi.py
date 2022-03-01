@@ -36,6 +36,7 @@ class Flickr:
 
             authorize_url = api.auth_url(perms='write')
             webbrowser.open_new_tab(authorize_url)
+            print(authorize_url)
 
             verifier = str(input('Verifier code: '))
 
