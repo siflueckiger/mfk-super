@@ -20,6 +20,8 @@ def makdirIfnotExists(dirName):
 
 class Pipeline:
     maskDir = "./pipeline/1.Mask/"
+    maskInputDir = "./modules/pipeline/Temp/1.1_MaskInput/"
+    maskOutputDir = "./modules/pipeline/Temp/1.2_MaskOutput/"
     styleTransfertDir = "./pipeline/2.StyleTransfert/"
     applyMaskDir = "./pipeline/3.ApplyMask/"
 
@@ -50,7 +52,6 @@ class Pipeline:
         #self.ApplyMask()
         self.CleanUp()
         self.MoveImagesToRaw()
-
 
         self.setNow()
         self.evaluatePipeline()
@@ -132,8 +133,6 @@ class Pipeline:
                 sys.exit("There was an error, while cleaning up ApplyMaskDir")
 
 
-
-
     ##########################################
     ############## First Step ################
     ##########################################
@@ -141,14 +140,7 @@ class Pipeline:
     def GenerateMask(self):
         print("############ 1. Mask ############ ")
 
-        maskDirInput = self.maskDir + "/Input/"
-        maskDirOutput = self.maskDir + "./1.Mask/Output/"
-
-        imageSegmentation = ImageSegmentation(maskDirInput, maskDirOutput)
-
-
-        makdirIfnotExists(maskDirInput)
-        makdirIfnotExists(maskDirOutput)
+        imageSegmentation = ImageSegmentation(self.maskInputDir, self.maskOutputDir, )
 
         for img in self.imgs:
             shutil.copy(self.inputDir+img,maskDirInput+img)
@@ -157,8 +149,6 @@ class Pipeline:
             imageSegmentation.sim_run()
         else:
             imageSegmentation.run()
-
-
 
 
     ###########################################

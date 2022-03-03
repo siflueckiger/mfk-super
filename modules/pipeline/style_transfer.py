@@ -8,58 +8,85 @@ def makdirIfnotExists(dirName):
     if not os.path.exists(dirName):
         os.makedirs(dirName)
 
-SUBPROCESS = True
+class StyleTransfert:
+    def __init__(self, checkPointDirectory, inputDirectory, outputDirectory,SimMode = False):
+        self.SIMULATION_MODE = SimMode
+        print()
+        print("----")
+        self.checkPointDir = checkPointDirectory
+        print("checkpoint path: ", checkPointDir)
+        self.inputDir = inputDirectory
+        self.imgs = os.listdir(self.inputDir)
+        #self.copyFromPipelineDirectory()
+        self.outputDir = outputDirectory
+        print("output Path: ", outputDir)
+        self.LocalOutputDir = "./pipelineOutput/"
+        makdirIfnotExists(self.LocalOutputDir)
 
-print()
-print("----")
+        self.checkPathes()
 
-cp = "./checkpoints/useForEvaluation/LargerTrainingDataSet_Train2014_and_WIDER_train_and_OI_Challenge_neonMask_epoches_8/"
-#cp = os.path.abspath(cp)+"/"
-print("checkpoint path: ", cp)
-
-inputDir = "../Vernissage_pipeline/2.StyleTransfert/Input/"
-
-print("---- Copying from Pipeline Input Directory")
-subprocess.call("cp " + inputDir + "* ./input-image/", shell=True)
-
-inputDir = "./input-image/"
-# inputDir = os.path.abspath(inputDir)+"/"
-print("input Path: ", inputDir)
+    def copyFromPipelineDirectory(self):
+        print("---- Copying from Pipeline Input Directory")
+        subprocess.call("cp " + self.inputDir + "* ./input-image/", shell=True)
+        self.inputDir = "./input-image/"
+        print("input Path: ", inputDir)
 
 
-outputDir = "../Vernissage_pipeline/2.StyleTransfert/Output/"
-LocalOutputDir = "./pipelineOutput/"
-# outputDir = os.path.abspath(outputDir)+"/"
-print("output Path: ", outputDir)
+    def checkPathes(self):
+        print("---- CheckpointDir Exists: ", os.path.exists(checkPointDir))
+        print("---- input Dir Exists: ", os.path.exists(inputDir))
+        print("---- outputDir Exists: ", os.path.exists(outputDir))
 
-print("---- CheckpointDir Exists: ", os.path.exists(cp))
-print("---- input Dir Exists: ", os.path.exists(inputDir))
-print("---- outputDir Exists: ", os.path.exists(outputDir))
-#name = cp.replace("/","")
-#name = cp.replace("./checkpoints","")
-#outputDir = "./outputEvaluate/{0}".format(name)
+    def setSubprocessComand(self):
+        self.command = "tensorman run --gpu -- python evaluate.py \
+             --checkpoint {0} \
+             --in-path {1} \
+             --out-path {2} \
+             --allow-different-dimensions".format(self.checkPointDir, self.inputDir, self.LocalOutputDir)
+        print("----", self.command)
 
-makdirIfnotExists(LocalOutputDir)
-print("----")
-print("----")
-command = "tensorman run --gpu -- python evaluate.py \
-    --checkpoint {0} \
-    --in-path {1} \
-    --out-path {2} \
-    --allow-different-dimensions".format(cp, inputDir, LocalOutputDir)
+    def _processImages(self):
+        subprocess.call(self.command, shell=True)
 
-print("----", command)
-if SUBPROCESS:
-    subprocess.call(command, shell=True)
-else:
-    print("---- Testing -- set SUBPROCESS TO True")
+    def run(self):
+        if not self.SIMULATION_MODE:
+            self._processImages()
+            self._renameOutputFiles()
+            self._copyBackToPipelineDirectory()
+        else:
+            self._sim_run()
 
-print("---- Rename output Files")
-images = os.listdir(LocalOutputDir)
-for img in images:
-    os.rename(LocalOutputDir+img, LocalOutputDir+"styled_"+img)
-print("---- Copy back to Pipeline directory.")
-subprocess.call("cp "+LocalOutputDir+"* "+outputDir, shell=True)
-subprocess.call("rm "+LocalOutputDir+"*", shell=True)
-subprocess.call("rm "+inputDir+"*", shell=True)
-print("---- Returning to pipeline")
+    def _sim_run(self):
+        import cv2
+        print("---- Testing ---- This Step is run in SIMULATION MODE")
+        print(self.imgs)
+        for img in self.imgs:
+            print(img)
+            print(self.inputDir)
+            if img.startswith("."):
+                continue
+            imgage = cv2.imread(self.inputDir + img)
+            print("{}{}".format(self.inputDir, img))
+            res = cv2.putText(imgage, "Image Processed - Sincerely your Style Transfert Braino", (50,250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
+            cv2.imwrite(self.outputDir+img, res)
+
+    def _renameOutputFiles(self):
+        print("---- Rename output Files")
+        self.images = os.listdir(self.LocalOutputDir)
+        for img in self.images:
+            os.rename(self.LocalOutputDir+img, self.LocalOutputDir+"styled_"+img)
+
+    def _copyBackToPipelineDirectory(self):
+        print("---- Copy back to Pipeline directory.")
+        subprocess.call("cp "+self.LocalOutputDir+"* "+self.outputDir, shell=True)
+        subprocess.call("rm "+self.LocalOutputDir+"*", shell=True)
+        subprocess.call("rm "+self.inputDir+"*", shell=True)
+        print("---- Returning to pipeline")
+
+if __name__ == "__main__":
+    checkPointDir = "./checkpoints/useForEvaluation/LargerTrainingDataSet_Train2014_and_WIDER_train_and_OI_Challenge_neonMask_epoches_8/"
+    inputDir =  "./Temp/2.1_StyleTransfertInput/"
+    outputDir = "./Temp/2.2_StyleTransfertOutput/"
+
+    styleTransfert = StyleTransfert(checkPointDir, inputDir, outputDir, SimMode=True) 
+    styleTransfert.run()

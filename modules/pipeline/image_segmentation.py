@@ -57,9 +57,22 @@ class ImageSegmentation:
     self._cleanUp()
 
   def sim_run(self):
-    print("Pretending to run segmentation step.")
+    print("Runing in simulation mode")
+    import cv2
+    for im_fname in self.imgs:
+      if im_fname.startswith("."):
+        continue
 
-    
+      # Load and transfomr
+      print(self.inputDir + im_fname)
+      img = cv2.imread(self.inputDir + im_fname)
+
+      #predict
+
+      # generate color Mask and save
+      res = cv2.putText(img, "Image Processed - Sincerely your Segmentation Braino", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
+      cv2.imwrite(self.outputDir + "mask_" + im_fname, res)
+
 
 if __name__ == "__main__":
   inputDir = "./MaskInput/"
@@ -68,6 +81,6 @@ if __name__ == "__main__":
   ##os.makedirs(outputDir)
   ##os.popen("cp ./input/* "+inputDir)
   imageSegemntator = ImageSegmentation(inputDir, outputDir)
-  imageSegemntator.run()
+  imageSegemntator.sim_run()
 
 
