@@ -35,4 +35,3 @@ if __name__ == '__main__':
             time.sleep(1.5)
             print(counter)
             counter = counter + 1
-

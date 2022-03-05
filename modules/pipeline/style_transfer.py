@@ -2,7 +2,8 @@
 #comment fluegu
 import subprocess
 import os
-
+import sys
+print(sys.exec_prefix)
 # Functions
 def makdirIfnotExists(dirName):
     if not os.path.exists(dirName):
@@ -17,12 +18,16 @@ class StyleTransfert:
         print("checkpoint path: ", self.checkPointDir)
         print(inputDirectory)
         self.inputDir = inputDirectory
-        self.imgs = os.listdir(self.inputDir)
+        #self.imgs = os.listdir(self.inputDir)
         #self.copyFromPipelineDirectory()
         self.outputDir = outputDirectory
+        
         print("output Path: ", self.outputDir)
-        self.LocalOutputDir = "./pipelineOutput/"
-        makdirIfnotExists(self.LocalOutputDir)
+
+        self.evaluateDir = "/home/simonflueckiger/Documents/01_MRT/02_installationen/_archiv/mfk-super/PIPELINE/fast-style-transfer/"
+        self.setSubprocessComand()
+        #self.LocalOutputDir = "./pipelineOutput/"
+        #makdirIfnotExists(self.LocalOutputDir)
 
         self.checkPathes()
 
@@ -39,21 +44,42 @@ class StyleTransfert:
         print("---- outputDir Exists: ", os.path.exists(self.outputDir))
 
     def setSubprocessComand(self):
-        self.command = "tensorman run --gpu -- python evaluate.py \
+        localInputDir = "./Input/"
+        localOutputDir = "./Output"
+
+        self.command = "cd {3};tensorman run --gpu -- python3 evaluate.py \
              --checkpoint {0} \
              --in-path {1} \
              --out-path {2} \
-             --allow-different-dimensions".format(self.checkPointDir, self.inputDir, self.LocalOutputDir)
+             --allow-different-dimensions".format(self.checkPointDir, localInputDir, localOutputDir, self.evaluateDir)
         print("----", self.command)
 
+
     def _processImages(self):
+        
+        localInputDirFullPath = "/home/simonflueckiger/Documents/01_MRT/02_installationen/_archiv/mfk-super/PIPELINE/fast-style-transfer/Input/"
+        localOutputDirFullPath = "/home/simonflueckiger/Documents/01_MRT/02_installationen/_archiv/mfk-super/PIPELINE/fast-style-transfer/Output/"
+        
+        try: 
+            subprocess.check_call("cp -r {}* {}".format(self.inputDir, localInputDirFullPath), shell=True)
+        except subprocess.CalledProcessError:
+            sys.exit("There was an error, while copiyng files to tyle-transfert-dir")
+
         subprocess.call(self.command, shell=True)
+        try: 
+            subprocess.check_call("cp -r {}* {}".format(localOutputDirFullPath, self.outputDir), shell=True)
+            subprocess.check_call("rm -r {}*".format(localOutputDirFullPath), shell=True)
+            subprocess.check_call("rm -r {}*".format(localInputDirFullPath), shell=True)
+        except subprocess.CalledProcessError:
+            sys.exit("There was an error, while copiyng files to tyle-transfert-dir")
+
+        
 
     def run(self):
         if not self.SIMULATION_MODE:
             self._processImages()
             self._renameOutputFiles()
-            self._copyBackToPipelineDirectory()
+            #self._copyBackToPipelineDirectory()
         else:
             self._sim_run()
 
@@ -75,9 +101,9 @@ class StyleTransfert:
 
     def _renameOutputFiles(self):
         print("---- Rename output Files")
-        self.images = os.listdir(self.LocalOutputDir)
+        self.images = os.listdir(self.outputDir)
         for img in self.images:
-            os.rename(self.LocalOutputDir+img, self.LocalOutputDir+"styled_"+img)
+            os.rename(self.outputDir+img, self.outputDir+"styled_"+img)
 
     def _copyBackToPipelineDirectory(self):
         print("---- Copy back to Pipeline directory.")
@@ -88,8 +114,11 @@ class StyleTransfert:
 
 if __name__ == "__main__":
     checkPointDir = "./checkpoints/useForEvaluation/LargerTrainingDataSet_Train2014_and_WIDER_train_and_OI_Challenge_neonMask_epoches_8/"
+    #checkPointDir = "/home/simonflueckiger/Documents/01_MRT/02_installationen/_archiv/mfk-super/PIPELINE/fast-style-transfer/checkpoints/useForEvaluation/LargerTrainingDataSet_Train2014_and_WIDER_train_and_OI_Challenge_neonMask_epoches_8"
+
     inputDir =  "./Temp/2.1_StyleTransfertInput/"
     outputDir = "./Temp/2.2_StyleTransfertOutput/"
 
-    styleTransfert = StyleTransfert(checkPointDir, inputDir, outputDir, SimMode=True) 
+
+    styleTransfert = StyleTransfert(checkPointDir, inputDir, outputDir) 
     styleTransfert.run()
