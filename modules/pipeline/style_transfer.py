@@ -14,12 +14,13 @@ class StyleTransfert:
         print()
         print("----")
         self.checkPointDir = checkPointDirectory
-        print("checkpoint path: ", checkPointDir)
+        print("checkpoint path: ", self.checkPointDir)
+        print(inputDirectory)
         self.inputDir = inputDirectory
         self.imgs = os.listdir(self.inputDir)
         #self.copyFromPipelineDirectory()
         self.outputDir = outputDirectory
-        print("output Path: ", outputDir)
+        print("output Path: ", self.outputDir)
         self.LocalOutputDir = "./pipelineOutput/"
         makdirIfnotExists(self.LocalOutputDir)
 
@@ -33,9 +34,9 @@ class StyleTransfert:
 
 
     def checkPathes(self):
-        print("---- CheckpointDir Exists: ", os.path.exists(checkPointDir))
-        print("---- input Dir Exists: ", os.path.exists(inputDir))
-        print("---- outputDir Exists: ", os.path.exists(outputDir))
+        print("---- CheckpointDir Exists: ", os.path.exists(self.checkPointDir))
+        print("---- input Dir Exists: ", os.path.exists(self.inputDir))
+        print("---- outputDir Exists: ", os.path.exists(self.outputDir))
 
     def setSubprocessComand(self):
         self.command = "tensorman run --gpu -- python evaluate.py \
@@ -58,6 +59,7 @@ class StyleTransfert:
 
     def _sim_run(self):
         import cv2
+        import datetime
         print("---- Testing ---- This Step is run in SIMULATION MODE")
         print(self.imgs)
         for img in self.imgs:
@@ -68,6 +70,7 @@ class StyleTransfert:
             imgage = cv2.imread(self.inputDir + img)
             print("{}{}".format(self.inputDir, img))
             res = cv2.putText(imgage, "Image Processed - Sincerely your Style Transfert Braino", (50,250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
+            res = cv2.putText(imgage, "{}".format(datetime.datetime.now()), (50,350), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
             cv2.imwrite(self.outputDir+img, res)
 
     def _renameOutputFiles(self):

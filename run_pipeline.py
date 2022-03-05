@@ -1,14 +1,16 @@
 
+#from asyncio.windows_utils import pipe
 import os
 import shutil
 import subprocess
 import sys
 import time
 
-from flickr.config import api_secret, api_key
-from flickr.flickrApi import Flickr
+from config import api_secret, api_key
+from modules.flickr.flickrApi import Flickr
 
-from pipeline.image_segmentation import ImageSegmentation
+from modules.pipeline.image_segmentation import ImageSegmentation
+from modules.pipeline.style_transfer import StyleTransfert
 
 # Helper functions
 def makdirIfnotExists(dirName):
@@ -19,24 +21,28 @@ def makdirIfnotExists(dirName):
 
 
 class Pipeline:
-    maskDir = "./pipeline/1.Mask/"
+    dropDir = "./drop/"
     maskInputDir = "./modules/pipeline/Temp/1.1_MaskInput/"
     maskOutputDir = "./modules/pipeline/Temp/1.2_MaskOutput/"
-    styleTransfertDir = "./pipeline/2.StyleTransfert/"
-    applyMaskDir = "./pipeline/3.ApplyMask/"
+    styleTransfertInputDir = "./modules/pipeline/Temp/2.1_StyleTransfertInput/"
+    styleTransfertOutputDir = "./modules/pipeline/Temp/2.2_StyleTransfertOutput/"
+    checkpointDir = "./Some/Directory/"
+    applyMaskInputDir = "./pipeline/3.ApplyMask/"
+    rawImagesDir = "./rawImages/"
 
 
-    def __init__(self,inpDir, drpDir, outpDir, simulate = False):
+    def __init__(self, drpDir, outpDir, simulate = {"Mask" : False, "Transfert": False,"Apply" : False}):
 
         #dropDir = "./drop/
         #imgs = os.listdir(dropDir) 
         self.dropDir = drpDir
-        self.inputDir = inpDir
         self.updateImgs()
         self.outputDir = outpDir
         self.then = None
         self.now = None
-        self.sim = simulate
+        self.simMask = simulate["Mask"]
+        self.simTrans = simulate["Transfert"]
+        self.simApply = simulate["Apply"]
 
     def updateImgs(self):
         self.imgs = os.listdir(self.dropDir)
@@ -48,13 +54,14 @@ class Pipeline:
         print("############ Starting Pipeline ############")
 
         self.GenerateMask()
-        #self.StyleTransfert()
+        self.StyleTransfer()
         #self.ApplyMask()
-        self.CleanUp()
-        self.MoveImagesToRaw()
+        #self.CleanUp()
+        #self.MoveImagesToRaw()
 
         self.setNow()
         self.evaluatePipeline()
+        self.uploadToFlicker()
 
     def setThen(self):
         self.then = time.time()
@@ -62,8 +69,8 @@ class Pipeline:
     def setNow(self):
         self.now = time.time()
         
-    def evaluatePipeline(self,now, then):
-        ellapsed = (now-then)
+    def evaluatePipeline(self):
+        ellapsed = (self.now-self.then)
         minutes = round(ellapsed/60,0)
         seconds = round(ellapsed%60,2)
         nImages = len(self.imgs)
@@ -82,7 +89,9 @@ class Pipeline:
                 print("Temp Files " + i)
             else:
                 print("Copie files " + i)
-                shutil.copy(self.dropDir+i, self.inputDir+i)
+                shutil.copy(self.dropDir+i, self.maskInputDir+i)
+                shutil.copy(self.dropDir+i, self.rawImagesDir+i)
+                shutil.copy(self.dropDir+i, self.styleTransfertInputDir+i)
                 os.remove(self.dropDir+i)
         
         """
@@ -91,7 +100,7 @@ class Pipeline:
         except subprocess.CalledProcessError:
             sys.exit("An error occured while copying the images from the shared Directory to the Pipeline..")
         """
-        self.imgs = os.listdir(self.inputDir)
+        self.imgs = os.listdir(self.maskInputDir)
 
         print("############The following images were passed to the pipeline...")
         print()
@@ -140,49 +149,25 @@ class Pipeline:
     def GenerateMask(self):
         print("############ 1. Mask ############ ")
 
-        imageSegmentation = ImageSegmentation(self.maskInputDir, self.maskOutputDir, )
+        imageSegmentation = ImageSegmentation(self.maskInputDir, self.maskOutputDir,  self.simMask)
 
-        for img in self.imgs:
-            shutil.copy(self.inputDir+img,maskDirInput+img)
-
-        if self.sim:
-            imageSegmentation.sim_run()
-        else:
-            imageSegmentation.run()
+        imageSegmentation.run()
 
 
     ###########################################
     ############## Second Step ################
     ###########################################
-    def StyleTransfert(self):
+    def StyleTransfer(self):
 
-        styleDirInput = "./2.StyleTransfert/Input/"
-        styleDirOutput = "./2.StyleTransfert/Output/"
-
-        makdirIfnotExists(styleDirInput)
-        makdirIfnotExists(styleDirOutput)
-
-        print()
-        print('###########')
-        print('########### Copying')
-        print('########### from Pipeline input directory')
-        print('########### to Step 2 input directory')
-        print('###########')
-        print()
-
-        for img in self.imgs:
-            shutil.copy(self.inputDir+img, styleDirInput+img)
 
         print("########### 2. StyleTransfert")
-        print("########### Moving to Directory")
+        #print("########### Moving to Directory")
 
-        cdToDir = "cd ../fast-style-transfer/; "
-        pythonFile = "./runEvaluation_pipeline.py"
-
-        try:
-            subprocess.check_call(cdToDir+pythonFile, shell=True)
-        except subprocess.CalledProcessError:
-            sys.exit("An error occured at styletrasfert stage.")
+        #cdToDir = "cd ../fast-style-transfer/; "
+        #pythonFile = "./runEvaluation_pipeline.py"
+        print(self.styleTransfertInputDir)
+        styletransfert = StyleTransfert(self.checkpointDir, self.styleTransfertInputDir, self.styleTransfertOutputDir, self.simTrans)
+        styletransfert.run()
 
         print()
 
@@ -285,13 +270,12 @@ class Pipeline:
 def main():
 
     DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" # where the new images need to go
-    DROP = "./pipeline/drop/"
-    INPUTDIR =  "./pipeline/input/" # move to input dir to start prcdocessing
+    DROP = "./drop/"
     OUTPUTDIR = "./pipeline/output/" # result of whole pipeline
 
-    pipeline = Pipeline(INPUTDIR, DROP, OUTPUTDIR, simulate=True)
-
-    pipeline.handle()
+    pipeline = Pipeline(DROP, OUTPUTDIR, simulate={"Mask" : True, "Transfert" : True, "Apply" : True})   
+    pipeline.run()
+    #pipeline.handle()
 
 if __name__ == "__main__":
     main()

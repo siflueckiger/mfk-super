@@ -12,7 +12,7 @@ from gluoncv.utils.viz import get_color_pallete
 
 class ImageSegmentation:
 
-  def __init__(self, inputDir, outputDir) -> None:
+  def __init__(self, inputDir, outputDir, simMode = False ) -> None:
     """
     Generates foreground/background mask of an image.
 
@@ -25,6 +25,7 @@ class ImageSegmentation:
     self.inputDir = inputDir
     self.outputDir = outputDir
     self.imgs = os.listdir(inputDir)
+    self.SIMULATION_MODE = simMode
   
   def _processImages(self):
     print(self.imgs)
@@ -53,12 +54,16 @@ class ImageSegmentation:
   def run(self):
     """Processes a set of Images.
     """    
-    self._processImages()
-    self._cleanUp()
+    if not self.SIMULATION_MODE:
+      self._processImages()
+      self._cleanUp()
+    else:
+      self._sim_run()
 
-  def sim_run(self):
+  def _sim_run(self):
     print("Runing in simulation mode")
     import cv2
+    import datetime
     for im_fname in self.imgs:
       if im_fname.startswith("."):
         continue
@@ -70,17 +75,18 @@ class ImageSegmentation:
       #predict
 
       # generate color Mask and save
-      res = cv2.putText(img, "Image Processed - Sincerely your Segmentation Braino", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
+      res = cv2.putText(img, "Image Processed - Sincerely your Segmentation Braino\n this", (50,50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
+      res = cv2.putText(img, "{}".format(datetime.datetime.now()), (50,150), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
       cv2.imwrite(self.outputDir + "mask_" + im_fname, res)
 
 
 if __name__ == "__main__":
-  inputDir = "./MaskInput/"
-  outputDir = "./MaskOutput/"
+  inputDir = "./Temp/1.1_MaskInput/"
+  outputDir = "./Temp/1.2_MaskOutput/"
   ##os.makedirs(inputDir)
   ##os.makedirs(outputDir)
   ##os.popen("cp ./input/* "+inputDir)
-  imageSegemntator = ImageSegmentation(inputDir, outputDir)
+  imageSegemntator = ImageSegmentation(inputDir, outputDir, True )
   imageSegemntator.sim_run()
 
 
