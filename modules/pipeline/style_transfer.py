@@ -43,7 +43,7 @@ class StyleTransfert:
         print("---- outputDir Exists: ", os.path.exists(self.outputDir))
 
     def setSubprocessComand(self):
-        self.command = "cd {3};tensorman run --gpu -- python evaluate.py \
+        self.command = "cd {3};tensorman run --gpu -- python3 evaluate.py \
              --checkpoint {0} \
              --in-path {1} \
              --out-path {2} \
