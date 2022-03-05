@@ -22,8 +22,7 @@ class FileWithCallback(object):
 
 
 def callback(progress):
-    print("Uploading {} %".format(progress), end="\r")  
-
+    print("Uploading {} %".format(progress), end="\r")
 
 class Flickr:
 
@@ -49,7 +48,7 @@ class Flickr:
 
     def upload(self, filename):
         fileobj = FileWithCallback(filename, callback)
-        resp = self.api.upload("Test", fileobj, format="etree")
+        resp = self.api.upload("Museumsnacht 2022 im Museum für Kommunikation", fileobj, format="etree", description="www.magicrambatrash.ch \n www.instagram.com/magicrambatrash \n www.mfk.ch \n www.instagram.com/mfk_bern")
         resp=etree.tostring(resp).decode('UTF-8')
         pattern = r'.*?photoid>(.*)<.*'
         match = re.search(pattern, resp)
