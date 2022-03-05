@@ -74,6 +74,10 @@ class Flickr:
                 photoUrl = u.text
         return(photoUrl)
 
+    def addToPhotoset(self, photoId):
+        # photoset ID "Museumsnacht 2022": 72177720297139381
+        self.api.photosets.addPhoto(photoset_id=72177720297139381, photo_id=photoId)
+
 
 if __name__ == "__main__":
     import time
@@ -84,7 +88,7 @@ if __name__ == "__main__":
 
     #import xml.etree.ElementTree as ET
 
-
+    
     print("Take Picture")
     camera_port = 0
     camera = cv2.VideoCapture(camera_port)
@@ -95,6 +99,9 @@ if __name__ == "__main__":
     print("Flicker Authentication")
     flickr = Flickr(api_key, api_secret)
     id = flickr.putPlaceholder()
+
+    print("photoset stuff")
+    flickr.addToPhotoset(id)
 
     print(id)
 
