@@ -54,10 +54,12 @@ class Flickr:
         pattern = r'.*?photoid>(.*)<.*'
         match = re.search(pattern, resp)
         id = match.group(1)
+        print("Done uploading...")
         return(id)
 
     def putPlaceholder(self):
         id = self.upload("./placeholder.png")
+        print(id)
         return(id)
 
     def replace(self, filename, id ):
@@ -72,7 +74,6 @@ class Flickr:
             for u in urls.iter('url'):    
                 photoUrl = u.text
         return(photoUrl)
-
 
 
 if __name__ == "__main__":

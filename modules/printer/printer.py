@@ -1,6 +1,3 @@
-# TODO:
-# Zeit in Filname und auf Quittung die selbe
-
 from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime
 from escpos.printer import Usb
@@ -24,7 +21,7 @@ class receiptPrinter:
         self.shortener = pyshorteners.Shortener()
         self.printer = Usb(0x04b8,0x0e28,0)
         self.W = 550
-        self.H = 800
+        self.H = 850
         self.initImage()
     
     def initImage(self):
@@ -46,8 +43,8 @@ class receiptPrinter:
         footer = ImageFont.truetype('/home/pi/Documents/mfk-super/modules/printer/font/Source_Code_Pro/SourceCodePro-Regular.ttf', 25)
 
         # header
-        self.drawTextToImage('MfK-Super-KI-Foto', 30, h1, 'black')
-        self.drawTextToImage('by Magic Ramba Trash', 85, h2, 'black')
+        self.drawTextToImage('MfK-Super-KI-Foto', 15, h1, 'black')
+        self.drawTextToImage('by Magic Ramba Trash', 75, h2, 'black')
 
         # main content
         # generate qr-code
@@ -56,22 +53,18 @@ class receiptPrinter:
         generateQRCode(link)
 
         # paste qr-code
-        xPos = int((self.W - 450) / 2)
+        xPos = int((self.W - 550) / 2)
         self.img.paste(qr_img, (xPos, 195))
 
-        # add short url (qr-code-link)
-        #print('original url: ' + link)
-        #short_link = shortener.tinyurl.short(link)
-        #print('short url: ' + short_link)
-        self.drawTextToImage(url, 620, footer, 'black')
+        self.drawTextToImage(url, 720, footer, 'black')
 
         self.drawTextToImage('DEIN BILD | TA PHOTO | YOUR PICTURE', 150, p, 'black')
         date = datetime.today().strftime('%d.%m.%Y - %H:%M:%S')
         self.drawTextToImage(date, 180, p, 'black')
 
         # footer
-        self.drawTextToImage('www.mfk.ch', 730, footer, 'black')
-        self.drawTextToImage('www.magicrambatrash.ch', 760, footer, 'black')
+        self.drawTextToImage('www.mfk.ch', 780, footer, 'black')
+        self.drawTextToImage('www.magicrambatrash.ch', 820, footer, 'black')
 
         # save image
         date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
@@ -88,4 +81,4 @@ class receiptPrinter:
 
 if __name__ == "__main__":
     printer = receiptPrinter()
-    printer.print('www.srf.ch')
+    printer.print('https://tinyurl.com/y8vqzxap')

@@ -5,6 +5,7 @@ import picamera
 from picamera.array import PiRGBArray
 from cprint import *
 import cv2
+import pyshorteners
 
 
 
@@ -20,7 +21,7 @@ from config import api_key, api_secret
 
 # ---- SETTINGS ----
 
-DEBUG_WAIT_TIME = 1
+DEBUG_WAIT_TIME = 0
 WAITING_TIME_CONTDOWN = 0.6
 WAITING_TIME_AFTER_IMAGE_CAPTURE = 5
 
@@ -85,9 +86,9 @@ def CAMERA_COUNTDOWN_AND_TAKE_IMAGE(qr_url):
     cv2.imwrite(savepath, image)
 
     cprint.info('---> PRINT QR CODE')
-    # printer.print(qr_url)
+    printer.print(qr_url)
     
-    cprint('upload after capture image')
+    cprint('load after capture image')
     CAMERA_LOAD_OVERLAY(savepath)
     CAMERA_LOAD_OVERLAY(OVERLAY_IMAGE_PATH + 'verarbeitung2.png')
     wait(WAITING_TIME_AFTER_IMAGE_CAPTURE)
@@ -103,6 +104,8 @@ if __name__ == '__main__':
     button = Button()
     button.initGpioPin()
 
+    url_shortener = pyshorteners.Shortener()
+    
     printer = receiptPrinter()
 
     wait(DEBUG_WAIT_TIME)
@@ -111,7 +114,6 @@ if __name__ == '__main__':
     flickr = flickrApi.Flickr(api_key, api_secret)
     
     wait(DEBUG_WAIT_TIME)
-    
 
     cprint.info('---> INIT CAMERA')
     with picamera.PiCamera() as camera:
@@ -133,6 +135,9 @@ if __name__ == '__main__':
             placeholderID = flickr.putPlaceholder()
             cprint.warn('get url from placeholder image')
             imgurl = flickr.getUrl(placeholderID)
+            print("long url : " + imgurl)
+            shorturl = url_shortener.tinyurl.short(imgurl)
+            print("short url: " + shorturl)
             
             # TAKE IMAGE LOOP
             while True:
@@ -145,7 +150,7 @@ if __name__ == '__main__':
                     cprint('Button pressed')
 
                     # START CAMERA COUNTDOWN
-                    CAMERA_COUNTDOWN_AND_TAKE_IMAGE(imgurl)
+                    CAMERA_COUNTDOWN_AND_TAKE_IMAGE(shorturl)
 
                     rawCapture.truncate(0)
                     rawCapture.seek(0)
@@ -154,4 +159,7 @@ if __name__ == '__main__':
                     cprint.warn('upload placeholder image to flickr')
                     placeholderID = flickr.putPlaceholder()
                     cprint.warn('get url from placeholder image')
-                    imgurl = flickr.getUrl(placeholderID)
+                    imgurl = flickr.getShortUrl(placeholderID)
+                    print("long url : " + imgurl)
+                    shorturl = url_shortener.tinyurl.short(imgurl)
+                    print("short url: " + shorturl)
