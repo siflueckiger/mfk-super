@@ -5,6 +5,7 @@ from cprint import *
 
 GPIO_PIN = 15
 BUFFERTIME_AFTER_BUTTON_PRESSED = 0.3
+counter = 1
 
 class Button:
 
@@ -31,5 +32,7 @@ if __name__ == '__main__':
     while True:
         if (button.waitForUserInput() == True):
             cprint('Button pressed')
-            time.sleep(3)
+            time.sleep(1.5)
+            print(counter)
+            counter = counter + 1
 

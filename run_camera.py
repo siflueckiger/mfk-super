@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     cprint.info('---> INIT CAMERA')
     with picamera.PiCamera() as camera:
-        camera.resolution = (1920, 1088) # 1088 because: https://stackoverflow.com/questions/60989671/white-blue-balance-error-in-high-resolution-with-opencv-and-picamera-v2
+        camera.resolution = (1920, 1280) # 1088 because: https://stackoverflow.com/questions/60989671/white-blue-balance-error-in-high-resolution-with-opencv-and-picamera-v2
         camera.framerate = 15
         camera.sensor_mode = 2
         camera.rotation = 0
