@@ -47,16 +47,11 @@ class ImageSegmentation:
 
       mask.save(self.outputDir + "mask_" + im_fname)
   
-  def _cleanUp(self):
-    for im_fname in self.imgs:
-      os.remove(inputDir + im_fname)
-
   def run(self):
     """Processes a set of Images.
     """    
     if not self.SIMULATION_MODE:
       self._processImages()
-      self._cleanUp()
     else:
       self._sim_run()
 
