@@ -30,7 +30,7 @@ class Pipeline:
 
     applyMaskInputDirMask = maskOutputDir
     applyMaskInputDirStyle = styleTransfertOutputDir
-    applyMaskBackgroundDir = "./modules/pipeline/3.1_Backgrounds/"
+    applyMaskBackgroundDir = "./modules/pipeline/3.1_Backgrounds/selected/"
     applyMaskOutputDir = "./modules/pipeline/Temp/3.2_Output/"
 
     finalOutputDir = "./pipelineOutput/"
@@ -110,7 +110,7 @@ class Pipeline:
 
     def MoveFinalImagesToPipelineOutput(self):
         try: 
-            subprocess.check_call("cp -r {} {}".format(self.applyMaskOutputDir, self.finalOutputDir), shell=True)
+            subprocess.check_call("cp -r {}* {}".format(self.applyMaskOutputDir, self.finalOutputDir), shell=True)
         except subprocess.CalledProcessError:
             sys.exit("There was an error, while cleaning up maksDir.")
 
@@ -198,20 +198,21 @@ class Pipeline:
 def main():
 
     DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" # where the new images need to go
-    DROP = "./drop/"
+    #DROP = "./drop/"
     OUTPUTDIR = "./pipeline/output/" # result of whole pipeline
 
     pipeline = Pipeline(DROP, OUTPUTDIR, simulate={"Mask" : True, "Transfert" : True, "Apply" : True})   
-    pipeline.run()
-    #pipeline.handle()
+    #pipeline.run()
+    pipeline.handle()
 
 if __name__ == "__main__":
     ##### For Debugging !!!!!!!!!!
+    """
     try: 
         subprocess.check_call("cp -r {} {}".format("./rawImages/", "./drop/"), shell=True)
     except subprocess.CalledProcessError:
         sys.exit("There was an error, while cleaning up maksDir.")
-
+    """
 
     main()
 
