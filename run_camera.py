@@ -159,7 +159,7 @@ if __name__ == '__main__':
                     cprint.warn('upload placeholder image to flickr')
                     placeholderID = flickr.putPlaceholder()
                     cprint.warn('get url from placeholder image')
-                    imgurl = flickr.getShortUrl(placeholderID)
+                    imgurl = flickr.getUrl(placeholderID)
                     print("long url : " + imgurl)
                     shorturl = url_shortener.tinyurl.short(imgurl)
                     print("short url: " + shorturl)
