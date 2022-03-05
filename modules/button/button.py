@@ -32,4 +32,5 @@ if __name__ == '__main__':
         if (button.waitForUserInput() == True):
             cprint('Button pressed')
             time.sleep(3)
-
+            print(counter)
+            counter = counter + 1
