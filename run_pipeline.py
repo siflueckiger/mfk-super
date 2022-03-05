@@ -11,6 +11,7 @@ from modules.flickr.flickrApi import Flickr
 
 from modules.pipeline.image_segmentation import ImageSegmentation
 from modules.pipeline.style_transfer import StyleTransfert
+from modules.pipeline.apply_mask import ApplyMask
 
 # Helper functions
 def makdirIfnotExists(dirName):
@@ -18,23 +19,25 @@ def makdirIfnotExists(dirName):
         os.makedirs(dirName)
 
 
-
-
 class Pipeline:
     dropDir = "./drop/"
+    tempDir = "./modules/pipeline/Temp/"
     maskInputDir = "./modules/pipeline/Temp/1.1_MaskInput/"
     maskOutputDir = "./modules/pipeline/Temp/1.2_MaskOutput/"
     styleTransfertInputDir = "./modules/pipeline/Temp/2.1_StyleTransfertInput/"
     styleTransfertOutputDir = "./modules/pipeline/Temp/2.2_StyleTransfertOutput/"
     checkpointDir = "./Some/Directory/"
-    applyMaskInputDir = "./pipeline/3.ApplyMask/"
+
+    applyMaskInputDirMask = maskOutputDir
+    applyMaskInputDirStyle = styleTransfertOutputDir
+    applyMaskBackgroundDir = "./modules/pipeline/3.1_Backgrounds/"
+    applyMaskOutputDir = "./modules/pipeline/Temp/3.2_Output/"
+
+    finalOutputDir = "./pipelineOutput/"
     rawImagesDir = "./rawImages/"
 
 
     def __init__(self, drpDir, outpDir, simulate = {"Mask" : False, "Transfert": False,"Apply" : False}):
-
-        #dropDir = "./drop/
-        #imgs = os.listdir(dropDir) 
         self.dropDir = drpDir
         self.updateImgs()
         self.outputDir = outpDir
@@ -48,6 +51,7 @@ class Pipeline:
         self.imgs = os.listdir(self.dropDir)
 
     def run(self):
+        self.setupTempDir()
         self.setThen()
         self.MoveImagesToPipeline()
         #this.CleanUp()
@@ -55,13 +59,13 @@ class Pipeline:
 
         self.GenerateMask()
         self.StyleTransfer()
-        #self.ApplyMask()
-        #self.CleanUp()
-        #self.MoveImagesToRaw()
+        self.ApplyMask()
+        self.MoveFinalImagesToPipelineOutput()
+        self.CleanUp()
 
         self.setNow()
         self.evaluatePipeline()
-        self.uploadToFlicker()
+        #self.uploadToFlicker()
 
     def setThen(self):
         self.then = time.time()
@@ -94,52 +98,38 @@ class Pipeline:
                 shutil.copy(self.dropDir+i, self.styleTransfertInputDir+i)
                 os.remove(self.dropDir+i)
         
-        """
-        try:
-            subprocess.check_call("mv  "+this.dropDir+"/* "+this.inputDir, shell=True)
-        except subprocess.CalledProcessError:
-            sys.exit("An error occured while copying the images from the shared Directory to the Pipeline..")
-        """
         self.imgs = os.listdir(self.maskInputDir)
 
         print("############The following images were passed to the pipeline...")
         print()
         print(self.imgs, sep="/n")
         print()
-    
-    def MoveImagesToRaw(self):
-        try:
-            subprocess.check_call("mv "+self.inputDir+"* ./raw/", shell=True)
+
+    def MoveFinalImagesToPipelineOutput(self):
+        try: 
+            subprocess.check_call("cp -r {} {}".format(self.applyMaskBackgroundDir, self.finalOutputDir), shell=True)
         except subprocess.CalledProcessError:
-            sys.exit("An error occured while copying the images to the raw dir.")
+            sys.exit("There was an error, while cleaning up maksDir.")
 
 
     def CleanUp(self):
+        try: 
+            subprocess.check_call("rm -r ./Temp/", shell=True)
+        except subprocess.CalledProcessError:
+            sys.exit("There was an error, while deleting Temp directory.")
 
-        print("########## Cleaning Up Pipeline\n")
-        mask = os.listdir(self.maskDir)
-        print(mask)
-        if len(mask) > 0:
-            try: 
-                subprocess.check_call("rm -r ./1.Mask/*", shell=True)
-            except subprocess.CalledProcessError:
-                sys.exit("There was an error, while cleaning up maksDir.")
+    def setupTempDir(self):
+        directories = [
+                        self.tempDir,
+                        self.maskInputDir,
+                        self.maskOutputDir,
+                        self.styleTransfertInputDir,
+                        self.styleTransfertOutputDir,
+                        self.applyMaskOutputDir
+        ]
 
-        style = os.listdir(self.styleTransfertDir)
-        print(style)
-        if (len(style) > 0):
-            try: 
-                subprocess.check_call("rm -r ./2.StyleTransfert/*", shell=True)
-            except subprocess.CalledProcessError:
-                sys.exit("There was an error, while cleaning up StyleTransfetDir")
-
-        apply = os.listdir(self.applyMaskDir)
-        print(apply)
-        if (len(apply) > 0):
-            try: 
-                subprocess.check_call("rm -r ./3.ApplyMask/*", shell=True)
-            except subprocess.CalledProcessError:
-                sys.exit("There was an error, while cleaning up ApplyMaskDir")
+        for dir in directories:
+            makdirIfnotExists(dir)
 
 
     ##########################################
@@ -183,60 +173,10 @@ class Pipeline:
     ###########################################
 
     def ApplyMask(self):
-        MaskInputDir = "./3.ApplyMask/MaskInput/"
-        StyledInputDir = "./3.ApplyMask/StyledInput/"
-        ApplyedMaskOutputDir = "./3.ApplyMask/Output/"
 
-        makdirIfnotExists(MaskInputDir)
-        makdirIfnotExists(StyledInputDir)
-        makdirIfnotExists(ApplyedMaskOutputDir)
+        applyMask = ApplyMask(self.applyMaskInputDirMask, self.applyMaskInputDirStyle, self.applyMaskBackgroundDir, self.applyMaskOutputDir, self.simApply)
+        applyMask.run()
 
-        ## Output dirs from previous steps
-        maskDirOutput = "./1.Mask/Output/"
-        styleDirOutput = "./2.StyleTransfert/Output/"
-
-        print()
-        print('###########')
-        print('########### Copying')
-        print('########### from Step 1 output directory')
-        print('########### to Step 3 inputMask directory')
-        print('###########')
-        print()
-
-
-        try:
-            subprocess.check_call("cp "+maskDirOutput+"* "+MaskInputDir, shell=True)
-        except subprocess.CalledProcessError:
-            sys.exit("An error occured copying images to the 3th Step...")
-
-        print()
-        print('###########')
-        print('########### Copying')
-        print('########### from Step 2 output directory')
-        print('########### to Step 3 StyledInput directory')
-        print('###########')
-        print()
-
-
-        try:
-            subprocess.check_call("cp "+styleDirOutput+"* "+StyledInputDir, shell=True)
-        except subprocess.CalledProcessError:
-            sys.exit("An error occured coping images to the 3th Step..")
-
-        print("########### 3. Apply Mask and add Background Image on Styled Image")
-
-        pythonFile = "python3 ../ApplyMask/applyMask_pipeline.py"
-
-        try:
-            subprocess.check_call(pythonFile, shell=True)
-        except subprocess.CalledProcessError:
-            sys.exit("An error occured runing the applyMask_pipeline skript.")
-
-
-
-        print("########## Copy files to the Pipeline Output Directory")
-
-        subprocess.call("cp "+ ApplyedMaskOutputDir + "/* " + self.outputDir, shell=True)
 
     def countImages(self,imgs):
         n = 0

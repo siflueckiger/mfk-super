@@ -71,7 +71,7 @@ class StyleTransfert:
             print("{}{}".format(self.inputDir, img))
             res = cv2.putText(imgage, "Image Processed - Sincerely your Style Transfert Braino", (50,250), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
             res = cv2.putText(imgage, "{}".format(datetime.datetime.now()), (50,350), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
-            cv2.imwrite(self.outputDir+img, res)
+            cv2.imwrite(self.outputDir+"styled_"+img, res)
 
     def _renameOutputFiles(self):
         print("---- Rename output Files")

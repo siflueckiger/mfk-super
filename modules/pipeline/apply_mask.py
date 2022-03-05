@@ -45,20 +45,20 @@ class ApplyMask:
             self.sim_run()
 
     def sim_run(self):
-        backgroundImages = os.listdir(backgroundDir)
-        N_backgroundImages = len(backgroundImages)
+        self.backgroundImages = os.listdir(self.backgroundDir)
+        N_backgroundImages = len(self.backgroundImages)
         NumberList = range(N_backgroundImages)
 
         for img in self.imgs:
             if img.startswith("."):
                 continue
             print(img)
-            mask = cv2.imread(maskDir + img)
-            styled = cv2.imread(styledDir + img.replace("mask", "styled"))
+            mask = cv2.imread(self.maskDir + img)
+            styled = cv2.imread(self.styledDir + img.replace("mask", "styled"))
             
-            bg = cv2.imread(backgroundDir+backgroundImages[sample(NumberList, 1)[0]])
+            bg = cv2.imread(self.backgroundDir+self.backgroundImages[sample(NumberList, 1)[0]])
             res = cv2.putText(styled, "Image Processed - Sincerely your Apply Mask Braino", (50,500), cv2.FONT_HERSHEY_SIMPLEX, 2, (0,0,255), 5)
-            cv2.imwrite(outputDir+img.replace("mask", "finale"), res)
+            cv2.imwrite(self.outputDir+img.replace("mask", "finale"), res)
 
 if __name__ == "__main__":
     
