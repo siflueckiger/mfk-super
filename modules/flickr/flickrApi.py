@@ -75,8 +75,8 @@ class Flickr:
         return(photoUrl)
 
     def addToPhotoset(self, photoId):
-        # photoset ID "Museumsnacht 2022": 72177720297139381
-        self.api.photosets.addPhoto(photoset_id=72177720297139381, photo_id=photoId)
+        # photoset ID "Museumsnacht 2022": 72177720297140039
+        self.api.photosets.addPhoto(photoset_id=72177720297140039, photo_id=photoId)
 
 
 if __name__ == "__main__":
