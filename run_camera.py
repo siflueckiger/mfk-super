@@ -85,9 +85,9 @@ def CAMERA_COUNTDOWN_AND_TAKE_IMAGE(qr_url):
     cv2.imwrite(savepath, image)
 
     cprint.info('---> PRINT QR CODE')
-    printer.print(qr_url)
+    # printer.print(qr_url)
     
-    cprint('load after capture image')
+    cprint('upload after capture image')
     CAMERA_LOAD_OVERLAY(savepath)
     CAMERA_LOAD_OVERLAY(OVERLAY_IMAGE_PATH + 'verarbeitung2.png')
     wait(WAITING_TIME_AFTER_IMAGE_CAPTURE)
@@ -112,6 +112,7 @@ if __name__ == '__main__':
     
     wait(DEBUG_WAIT_TIME)
     
+
     cprint.info('---> INIT CAMERA')
     with picamera.PiCamera() as camera:
         camera.resolution = (1920, 1088) # 1088 because: https://stackoverflow.com/questions/60989671/white-blue-balance-error-in-high-resolution-with-opencv-and-picamera-v2
@@ -140,8 +141,17 @@ if __name__ == '__main__':
 
                 # WAIT FOR USER INPUT
                 if (button.waitForUserInput() == True):
-                    filename = datetime.datetime.now().strftime("%Y-%m-%d_%H%M%S_mfk-super_id" + placeholderID)
+                    filename = datetime.datetime.now().strftime("%y-%m-%d_%H%M%S_mfk-super_" + placeholderID)
                     cprint('Button pressed')
 
                     # START CAMERA COUNTDOWN
                     CAMERA_COUNTDOWN_AND_TAKE_IMAGE(imgurl)
+
+                    rawCapture.truncate(0)
+                    rawCapture.seek(0)
+
+                    # upload placeholder for next image
+                    cprint.warn('upload placeholder image to flickr')
+                    placeholderID = flickr.putPlaceholder()
+                    cprint.warn('get url from placeholder image')
+                    imgurl = flickr.getUrl(placeholderID)
