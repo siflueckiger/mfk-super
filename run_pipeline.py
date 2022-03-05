@@ -6,12 +6,12 @@ import subprocess
 import sys
 import time
 
-from config import api_secret, api_key
-from modules.flickr.flickrApi import Flickr
-
 from modules.pipeline.image_segmentation import ImageSegmentation
 from modules.pipeline.style_transfer import StyleTransfert
 from modules.pipeline.apply_mask import ApplyMask
+from modules.flickr.flickrApi import Flickr
+
+from config import api_key, api_secret
 
 # Helper functions
 def makdirIfnotExists(dirName):
@@ -47,25 +47,28 @@ class Pipeline:
         self.simTrans = simulate["Transfert"]
         self.simApply = simulate["Apply"]
 
+        self.flickr = Flickr(api_key=api_key, api_secret=api_secret)
+
     def updateImgs(self):
         self.imgs = os.listdir(self.dropDir)
 
     def run(self):
+        self.CleanUp()
         self.setupTempDir()
         self.setThen()
         self.MoveImagesToPipeline()
-        #this.CleanUp()
+        
         print("############ Starting Pipeline ############")
 
         self.GenerateMask()
         self.StyleTransfer()
         self.ApplyMask()
         self.MoveFinalImagesToPipelineOutput()
-        self.CleanUp()
+        #self.CleanUp()
 
         self.setNow()
         self.evaluatePipeline()
-        #self.uploadToFlicker()
+        self.uploadToFlicker()
 
     def setThen(self):
         self.then = time.time()
@@ -107,14 +110,14 @@ class Pipeline:
 
     def MoveFinalImagesToPipelineOutput(self):
         try: 
-            subprocess.check_call("cp -r {} {}".format(self.applyMaskBackgroundDir, self.finalOutputDir), shell=True)
+            subprocess.check_call("cp -r {} {}".format(self.applyMaskOutputDir, self.finalOutputDir), shell=True)
         except subprocess.CalledProcessError:
             sys.exit("There was an error, while cleaning up maksDir.")
 
 
     def CleanUp(self):
         try: 
-            subprocess.check_call("rm -r ./Temp/", shell=True)
+            subprocess.check_call("rm -r {}".format(self.tempDir), shell=True)
         except subprocess.CalledProcessError:
             sys.exit("There was an error, while deleting Temp directory.")
 
@@ -131,25 +134,12 @@ class Pipeline:
         for dir in directories:
             makdirIfnotExists(dir)
 
-
-    ##########################################
-    ############## First Step ################
-    ##########################################
-
     def GenerateMask(self):
         print("############ 1. Mask ############ ")
-
         imageSegmentation = ImageSegmentation(self.maskInputDir, self.maskOutputDir,  self.simMask)
-
         imageSegmentation.run()
 
-
-    ###########################################
-    ############## Second Step ################
-    ###########################################
     def StyleTransfer(self):
-
-
         print("########### 2. StyleTransfert")
         #print("########### Moving to Directory")
 
@@ -161,22 +151,20 @@ class Pipeline:
 
         print()
 
-        #print("########## Moving back to Pipeline Directory.")
-
-        #subprocess.call("cd ./", shell=True)
-        #subprocess.call("pwd", shell=True)
-        #subprocess.call("ls ", shell=True)
-
-
-    ###########################################
-    ############## Third Step ################
-    ###########################################
-
     def ApplyMask(self):
-
         applyMask = ApplyMask(self.applyMaskInputDirMask, self.applyMaskInputDirStyle, self.applyMaskBackgroundDir, self.applyMaskOutputDir, self.simApply)
         applyMask.run()
 
+    def uploadToFlicker(self):
+        uploadImages = os.listdir(self.finalOutputDir)
+        for img in uploadImages:
+            if img.startswith("."):
+                continue
+            print(img.split("_"))
+            id = img.split("_")[4]
+            id = id.split(".")[0]
+            resp = self.flickr.replace(self.finalOutputDir+img, id)
+            print(resp)
 
     def countImages(self,imgs):
         n = 0
@@ -218,6 +206,13 @@ def main():
     #pipeline.handle()
 
 if __name__ == "__main__":
+    ##### For Debugging !!!!!!!!!!
+    try: 
+        subprocess.check_call("cp -r {} {}".format("./rawImages/", "./drop/"), shell=True)
+    except subprocess.CalledProcessError:
+        sys.exit("There was an error, while cleaning up maksDir.")
+
+
     main()
 
     """

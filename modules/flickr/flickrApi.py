@@ -61,8 +61,8 @@ class Flickr:
         return(id)
 
     def replace(self, filename, id ):
-        fileobj = FileWithCallback("./test.png", callback)
-        resp = self.api.replace(filename="./test.png",photo_id=id, fileobj=fileobj, format="etree")
+        fileobj = FileWithCallback(filename, callback)
+        resp = self.api.replace(filename, photo_id=id, fileobj=fileobj, format="etree")
         return(resp)
 
     def getUrl(self, id):
