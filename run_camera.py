@@ -160,6 +160,8 @@ if __name__ == '__main__':
                     # upload placeholder for next image
                     cprint.warn('upload placeholder image to flickr')
                     placeholderID = flickr.putPlaceholder()
+                    flickr.addToPhotoset(placeholderID)
+
                     cprint.warn('get url from placeholder image')
                     imgurl = flickr.getUrl(placeholderID)
                     print("long url : " + imgurl)
