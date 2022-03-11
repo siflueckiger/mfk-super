@@ -9,7 +9,7 @@ import pyshorteners
 
 
 def generateQRCode(link):
-    qr = qrcode.QRCode(box_size=15)
+    qr = qrcode.QRCode(box_size=10, version=1)
     qr.add_data(link)
     qr.make()
     global qr_img
@@ -21,7 +21,7 @@ class receiptPrinter:
         self.shortener = pyshorteners.Shortener()
         self.printer = Usb(0x04b8,0x0e28,0)
         self.W = 550
-        self.H = 870
+        self.H = 700
         self.initImage()
     
     def initImage(self):
@@ -53,19 +53,19 @@ class receiptPrinter:
         generateQRCode(link)
 
         # paste qr-code
-        xPos = int((self.W - 550) / 2)
+        xPos = 95
         self.img.paste(qr_img, (xPos, 195))
 
-        self.drawTextToImage(url, 720, footer, 'black')
+        self.drawTextToImage(url, 550, footer, 'black')
 
         self.drawTextToImage('DEIN BILD | TA PHOTO | YOUR PICTURE', 150, p, 'black')
         date = datetime.today().strftime('%d.%m.%Y - %H:%M:%S')
         self.drawTextToImage(date, 180, p, 'black')
 
         # footer
-        self.drawTextToImage('www.mfk.ch', 780, footer, 'black')
-        self.drawTextToImage('www.magicrambatrash.ch', 810, footer, 'black')
-        self.drawTextToImage('follow us on instagram: magicrambatrash', 840, footer, 'black')
+        self.drawTextToImage('www.mfk.ch', 610, footer, 'black')
+        self.drawTextToImage('www.magicrambatrash.ch', 640, footer, 'black')
+        self.drawTextToImage('follow us on instagram: magicrambatrash', 670, footer, 'black')
 
         # save image
         date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
