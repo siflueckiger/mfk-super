@@ -23,6 +23,7 @@ class receiptPrinter:
         self.W = 550
         self.H = 700
         self.initImage()
+        self.panel_buttons = False
     
     def initImage(self):
         COLOR_MODE = 'RGB'
