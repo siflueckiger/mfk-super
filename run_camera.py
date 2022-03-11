@@ -122,7 +122,7 @@ if __name__ == '__main__':
         camera.sensor_mode = 2
         camera.rotation = 0
         camera.start_preview()
-        camera.vflip = True
+        camera.hflip = True
 
         rawCapture = PiRGBArray(camera)
 
