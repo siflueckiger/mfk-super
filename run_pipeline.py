@@ -156,7 +156,7 @@ class Pipeline:
         applyMask.run()
 
     def uploadToFlicker(self):
-        uploadImages = os.listdir(self.finalOutputDir)
+        uploadImages = os.listdir(self.applyMaskOutputDir)
         for img in uploadImages:
             if img.startswith("."):
                 continue
@@ -197,8 +197,9 @@ class Pipeline:
 
 def main():
 
-    #DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" 
-    DROP =  "/run/user/1000/gvfs/smb-share:server=192.168.1.108,share=mfk-super-share/" # where the new images need to go
+    #
+    DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" 
+    #DROP =  "/run/user/1000/gvfs/smb-share:server=192.168.1.108,share=mfk-super-share/" # where the new images need to go
     #DROP = "./drop/"
     OUTPUTDIR = "./pipeline/output/" # result of whole pipeline
 
