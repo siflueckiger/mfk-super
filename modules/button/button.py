@@ -1,5 +1,6 @@
 #from asyncio.proactor_events import constants
 import time
+from datetime import datetime
 import RPi.GPIO as GPIO
 from cprint import *
 
@@ -26,12 +27,15 @@ class Button:
 
 if __name__ == '__main__':
     button = Button()
-
+    now = datetime.now()
     button.initGpioPin()
+    current_time = now.strftime("%H:%M:%S")
+    print(current_time, " - Start")
 
     while True:
         if (button.waitForUserInput() == True):
-            cprint('Button pressed')
-            time.sleep(1.5)
-            print(counter)
+            now = datetime.now()
+            current_time = now.strftime("%H:%M:%S")
+            print(current_time , " - Button pressed: " , counter)
             counter = counter + 1
+            time.sleep(1)
