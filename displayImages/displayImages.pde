@@ -27,12 +27,12 @@ boolean SIM = false; //true: simulate the big screen on a Window halfe the size 
 //       images half the original size are in the folder ImagesSmall for simulation
 //false: sketch is run on the big screen in real condition, with original size Images and on fullscreen
 
-int MODE = 3; // 1: Single image in the Center of the screen, No Scaling -> consider setting the boardersize to 0.
+int MODE = 4; // 1: Single image in the Center of the screen, No Scaling -> consider setting the boardersize to 0.
 // 2: Single image in the Center of the screen, with Up-Scaling
 // 3: Four images, No Scaling 
 
 float BOARDERSIZE = 0.05; //size of the boarder around the images, a small downscaling factor, relativ to the image- width and -heigth.
-float DISPLAYTIME = 3; //Time one image is displayed in seconds
+float DISPLAYTIME = 1.5; //Time one image is displayed in seconds
 
 String imagesDirPath;
 
@@ -46,7 +46,7 @@ PImage img;
 int imgI = 0;
 int countSinceInit = 0;
 
-int repetitionsSinceInit = 3;
+int repetitionsSinceInit = 3000000;
 
 float boarderSize = 1.-BOARDERSIZE; //  boardersize
 int imageWidth = 1920;
@@ -59,10 +59,13 @@ void settings() {
     size(1920, 1080);  // my display  2880 x 1800  dest: 3840 x 2160 -> sim at 1920 x 1080 with images 960 x 640
     imagesDirPath = sketchPath() + "/ImagesSmall/";
   } else {
-    fullScreen();
-    // imagesDirPath = sketchPath() + "/ImagesSmall/";
-    imagesDirPath = "/home/simonflueckiger/Documents/01_MRT/02_installationen/mfk-super/PIPELINE/Vernissage_pipeline/output/";
-  };
+    //fullScreen();
+    size(1920, 1080);
+    //imagesDirPath = sketchPath() + "/ImagesSmall/";
+    //imagesDirPath = "/home/simonflueckiger/Documents/01_MRT/02_installationen/mfk-super/PIPELINE/Vernissage_pipeline/output/";
+    //imagesDirPath = "../pipelineOutput/";
+    imagesDirPath = "/Users/danielschmocker/Documents/Projekte/Python/mfk-super/pipelineOutput";
+  }
 }
 
 void setup() {
@@ -126,6 +129,8 @@ void draw() {
   case 3:
     show4Images(img, imgI);
     break;
+  case 4:
+    showCollage(img, imgI);
   }
 
 
@@ -187,4 +192,44 @@ void show4Images(PImage img, int I) {
     image(img, width*(3./4.-(1.-boarderSize)*0.5-horizontalCorrection), height*(3./4.));
     break;
   }
+}
+
+void showCollage(PImage img, int I){
+  
+  //float horizontalCorrection = 0.02;
+  switch(I%6) {
+  case 0:
+    println("case 0");
+    img.resize((int)(imageWidth*boarderSize*0.4), (int)(imageHeight*boarderSize*0.4));
+    image(img, width/3, height/3);
+    break;
+  case 1:
+    println("case 1");
+    img.resize((int)(imageWidth*boarderSize*0.35), (int)(imageHeight*boarderSize*0.35));
+    image(img, 1.5*width/3, 2.3*height/3);
+    break;
+  case 2:
+    println("case 2");
+    img.resize((int)(imageWidth*boarderSize*0.25), (int)(imageHeight*boarderSize*0.25));
+    image(img, 1.43*width/2, 1.2*height/4);    
+    break;
+  case 3:
+    println("case 3");
+    img.resize((int)(imageWidth*boarderSize*0.2), (int)(imageHeight*boarderSize*0.2));
+    image(img, 1.73*width/2, 2.5*height/4);
+    break;
+  
+  case 4:
+    println("case 4");
+    img.resize((int)(imageWidth*boarderSize*0.15), (int)(imageHeight*boarderSize*0.15));
+    image(img, 0.15*width, 2.7*height/4);
+    break;
+  
+  case 5:
+    println("case 5");
+    img.resize((int)(imageWidth*boarderSize*0.16), (int)(imageHeight*boarderSize*0.16));
+    image(img, 0.26*width, 3.5*height/4);
+    break;
+  }
+
 }
