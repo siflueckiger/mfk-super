@@ -114,7 +114,6 @@ PIPELINE/fast-style-transfer/transform_video.py
 
 PIPELINE/fast-style-transfer/wpa_supplicant.conf
 
-flickrQr/config.py
 config.py
 
 *.png
