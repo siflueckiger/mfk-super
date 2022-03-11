@@ -21,7 +21,7 @@ class receiptPrinter:
         self.shortener = pyshorteners.Shortener()
         self.printer = Usb(0x04b8,0x0e28,0)
         self.W = 550
-        self.H = 850
+        self.H = 870
         self.initImage()
     
     def initImage(self):
@@ -40,7 +40,7 @@ class receiptPrinter:
         h1 = ImageFont.truetype('/home/pi/Documents/mfk-super/modules/printer/font/Source_Code_Pro/SourceCodePro-Medium.ttf', 50)
         h2 = ImageFont.truetype('/home/pi/Documents/mfk-super/modules/printer/font/Source_Code_Pro/SourceCodePro-SemiBold.ttf', 25)
         p = ImageFont.truetype('/home/pi/Documents/mfk-super/modules/printer/font/Source_Code_Pro/SourceCodePro-SemiBold.ttf', 25)
-        footer = ImageFont.truetype('/home/pi/Documents/mfk-super/modules/printer/font/Source_Code_Pro/SourceCodePro-Regular.ttf', 25)
+        footer = ImageFont.truetype('/home/pi/Documents/mfk-super/modules/printer/font/Source_Code_Pro/SourceCodePro-Regular.ttf', 23)
 
         # header
         self.drawTextToImage('MfK-Super-KI-Foto', 15, h1, 'black')
@@ -64,8 +64,8 @@ class receiptPrinter:
 
         # footer
         self.drawTextToImage('www.mfk.ch', 780, footer, 'black')
-        self.drawTextToImage('www.magicrambatrash.ch', 800, footer, 'black')
-        self.drawTextToImage('follow us on instagram: maicrambatrash', 820, footer, 'black')
+        self.drawTextToImage('www.magicrambatrash.ch', 810, footer, 'black')
+        self.drawTextToImage('follow us on instagram: magicrambatrash', 840, footer, 'black')
 
         # save image
         date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
