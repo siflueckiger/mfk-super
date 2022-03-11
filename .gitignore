@@ -1,3 +1,5 @@
+config.py
+
 210821_fotogallery/
 
 PIPELINE/Vernissage_pipeline/output
@@ -113,8 +115,6 @@ PIPELINE/fast-style-transfer/test.tar.gz
 PIPELINE/fast-style-transfer/transform_video.py
 
 PIPELINE/fast-style-transfer/wpa_supplicant.conf
-
-config.py
 
 *.png
 *.pyc
