@@ -26,7 +26,7 @@ class Pipeline:
     maskOutputDir = "./modules/pipeline/Temp/1.2_MaskOutput/"
     styleTransfertInputDir = "./modules/pipeline/Temp/2.1_StyleTransfertInput/"
     styleTransfertOutputDir = "./modules/pipeline/Temp/2.2_StyleTransfertOutput/"
-    checkpointDir = "./Some/Directory/"
+    checkpointDir = "./checkpoints/useForEvaluation/LargerTrainingDataSet_Train2014_and_WIDER_train_and_OI_Challenge_neonMask_epoches_8/"
 
     applyMaskInputDirMask = maskOutputDir
     applyMaskInputDirStyle = styleTransfertOutputDir
@@ -197,11 +197,12 @@ class Pipeline:
 
 def main():
 
-    DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" # where the new images need to go
+    #DROP =  "/run/user/1000/gvfs/smb-share:server=raspberrypi.local,share=mfk-super-share/" 
+    DROP =  "/run/user/1000/gvfs/smb-share:server=192.168.1.108,share=mfk-super-share/" # where the new images need to go
     #DROP = "./drop/"
     OUTPUTDIR = "./pipeline/output/" # result of whole pipeline
 
-    pipeline = Pipeline(DROP, OUTPUTDIR, simulate={"Mask" : True, "Transfert" : True, "Apply" : True})   
+    pipeline = Pipeline(DROP, OUTPUTDIR)# simulate={"Mask" : True, "Transfert" : True, "Apply" : True})   
     #pipeline.run()
     pipeline.handle()
 

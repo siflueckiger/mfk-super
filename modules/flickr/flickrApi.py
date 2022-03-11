@@ -22,8 +22,7 @@ class FileWithCallback(object):
 
 
 def callback(progress):
-    print("Uploading {} %".format(progress), end="\r")  
-
+    print("Uploading {} %".format(progress), end="\r")
 
 class Flickr:
 
@@ -49,7 +48,7 @@ class Flickr:
 
     def upload(self, filename):
         fileobj = FileWithCallback(filename, callback)
-        resp = self.api.upload("Test", fileobj, format="etree")
+        resp = self.api.upload("Museumsnacht 2022 im Museum für Kommunikation", fileobj, format="etree", description="www.magicrambatrash.ch \n www.instagram.com/magicrambatrash \n www.mfk.ch \n www.instagram.com/mfk_bern")
         resp=etree.tostring(resp).decode('UTF-8')
         pattern = r'.*?photoid>(.*)<.*'
         match = re.search(pattern, resp)
@@ -75,6 +74,10 @@ class Flickr:
                 photoUrl = u.text
         return(photoUrl)
 
+    def addToPhotoset(self, photoId):
+        # photoset ID "Museumsnacht 2022": 72177720297140039
+        self.api.photosets.addPhoto(photoset_id=72177720297140039, photo_id=photoId)
+
 
 if __name__ == "__main__":
     import time
@@ -85,7 +88,7 @@ if __name__ == "__main__":
 
     #import xml.etree.ElementTree as ET
 
-
+    
     print("Take Picture")
     camera_port = 0
     camera = cv2.VideoCapture(camera_port)
@@ -96,6 +99,9 @@ if __name__ == "__main__":
     print("Flicker Authentication")
     flickr = Flickr(api_key, api_secret)
     id = flickr.putPlaceholder()
+
+    print("photoset stuff")
+    flickr.addToPhotoset(id)
 
     print(id)
 

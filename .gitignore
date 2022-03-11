@@ -114,20 +114,19 @@ PIPELINE/fast-style-transfer/transform_video.py
 
 PIPELINE/fast-style-transfer/wpa_supplicant.conf
 
+flickrQr/config.py
 config.py
+
 *.png
 *.pyc
 
-<<<<<<< HEAD
 pipeline/input
 pipeline/output
 pipeline/1.Mask/
 pipeline/1.ApplyMask/
 
 .vscode
-=======
 
 
 
 !placeholder.png
->>>>>>> fafcd0096b96a8750f51a84fbf918258dc4bfa32

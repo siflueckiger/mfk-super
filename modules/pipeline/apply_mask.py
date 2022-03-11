@@ -13,7 +13,7 @@ class ApplyMask:
         self.SIMULATION_MODE = SimMode
 
     def _processImages(self):
-        backgroundImages = os.listdir(backgroundDir)
+        backgroundImages = os.listdir(self.backgroundDir)
         N_backgroundImages = len(backgroundImages)
         NumberList = range(N_backgroundImages)
 
@@ -22,17 +22,17 @@ class ApplyMask:
                 print(img)
                 continue
             print(img)
-            mask = cv2.imread(maskDir + img)
+            mask = cv2.imread(self.maskDir + img)
             mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
             _, mask = cv2.threshold(mask, 10, 255, cv2.THRESH_BINARY)
-            styled = cv2.imread(styledDir + img.replace("mask", "styled"))
+            styled = cv2.imread(self.styledDir + img.replace("mask", "styled"))
             
             mask = cv2.blur(mask, (10,10))
             fg = cv2.bitwise_and(styled,styled,mask=mask)
-            bg = cv2.imread(backgroundDir+backgroundImages[sample(NumberList, 1)[0]])
-
+            bg = cv2.imread(self.backgroundDir+backgroundImages[sample(NumberList, 1)[0]])
+            print(bg)
             res = cv2.addWeighted(fg, .9, bg, 0.9, 0)
-            cv2.imwrite(outputDir+img.replace("mask", "finale"), res)
+            cv2.imwrite(self.outputDir+img.replace("mask", "finale"), res)
 
     def _cleanUp(self):
         pass
