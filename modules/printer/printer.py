@@ -64,7 +64,8 @@ class receiptPrinter:
 
         # footer
         self.drawTextToImage('www.mfk.ch', 780, footer, 'black')
-        self.drawTextToImage('www.magicrambatrash.ch', 820, footer, 'black')
+        self.drawTextToImage('www.magicrambatrash.ch', 800, footer, 'black')
+        self.drawTextToImage('follow us on instagram: maicrambatrash', 820, footer, 'black')
 
         # save image
         date = datetime.today().strftime('%Y-%m-%d_%H%M%S')
