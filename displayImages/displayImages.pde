@@ -27,14 +27,25 @@ boolean SIM = false; //true: simulate the big screen on a Window halfe the size 
 //       images half the original size are in the folder ImagesSmall for simulation
 //false: sketch is run on the big screen in real condition, with original size Images and on fullscreen
 
-int MODE = 4; // 1: Single image in the Center of the screen, No Scaling -> consider setting the boardersize to 0.
+int MODE = 5; // 1: Single image in the Center of the screen, No Scaling -> consider setting the boardersize to 0.
 // 2: Single image in the Center of the screen, with Up-Scaling
 // 3: Four images, No Scaling 
+// 4: Collage
+// 5: 3x3 images
 
 float BOARDERSIZE = 0.05; //size of the boarder around the images, a small downscaling factor, relativ to the image- width and -heigth.
 float DISPLAYTIME = 1.5; //Time one image is displayed in seconds
 
+int NUMBER_OF_IMAGES = 8;
+
 String imagesDirPath;
+
+int case_num = 0;  
+
+// MODE 5
+float spacing;
+float t_b_margin, l_r_margin;
+float img_w, img_h;
 
 
 String[] imagePaths;
@@ -59,12 +70,12 @@ void settings() {
     size(1920, 1080);  // my display  2880 x 1800  dest: 3840 x 2160 -> sim at 1920 x 1080 with images 960 x 640
     imagesDirPath = sketchPath() + "/ImagesSmall/";
   } else {
-    //fullScreen();
-    size(1920, 1080);
+    fullScreen(P2D, 2);
+    //size(1920, 1080);
     //imagesDirPath = sketchPath() + "/ImagesSmall/";
-    //imagesDirPath = "/home/simonflueckiger/Documents/01_MRT/02_installationen/mfk-super/PIPELINE/Vernissage_pipeline/output/";
+    imagesDirPath = "/home/simonflueckiger/Documents/01_MRT/02_installationen/mfk-super/pipelineOutput";
     //imagesDirPath = "../pipelineOutput/";
-    imagesDirPath = "/Users/danielschmocker/Documents/Projekte/Python/mfk-super/pipelineOutput";
+    //imagesDirPath = "/Users/danielschmocker/Documents/Projekte/Python/mfk-super/pipelineOutput";
   }
 }
 
@@ -75,8 +86,27 @@ void setup() {
   background(0);
   imageDir = new File(imagesDirPath);
   initImages();
+  
+  if(MODE == 5){
+    t_b_margin = height/17;
+    l_r_margin = width / 17;
+    spacing = t_b_margin * 0.4;
+    float w = (width - (2*spacing) - (2*l_r_margin)) / 3;
+    //img_w = (width - (2*spacing) - (2*l_r_margin)) / 3; //imgageWidth * scalefactor = img_w
+    float scalefactor =  w / imageWidth*0.85;
+    img_w = imageWidth * scalefactor;
+    println(img_w);
+    //img_h = (height - (2*spacing) - (2*t_b_margin)) / 3;
+    img_h = imageHeight * scalefactor;
+    println(img_h);
+    //exit();
 
-  takeLastNImages(8);
+    imageMode(CORNER);
+    NUMBER_OF_IMAGES = 12;
+  
+  }
+
+  takeLastNImages(NUMBER_OF_IMAGES);
   //randomImageOrder();
   //imagePaths = sort(imagePaths);
 }
@@ -116,7 +146,7 @@ void randomImageOrder() {
 void draw() {
 
   println(imagePaths[imageIndex.get(imgI)]);
-  img = loadImage(imagePaths[imageIndex.get(imgI)]);
+  img = loadImage(imagePaths[imageIndex.get(imgI)]); 
   imgI++;
 
   switch(MODE) {
@@ -131,15 +161,18 @@ void draw() {
     break;
   case 4:
     showCollage(img, imgI);
+    break;
+  case 5:
+    show9Images(img, imgI);
   }
 
 
-  if (imagePaths.length < imageDir.listFiles(endsWithPng).length) {
+  if (imagePaths.length < imageDir.listFiles(endsWithPng).length) { // new Images??
     initImages();
-    takeLastNImages(8);
+    takeLastNImages(NUMBER_OF_IMAGES); //wieviele Bilder
     //randomImageOrder();
     countSinceInit = 0;
-    background(0);
+    //background(0);
   }
   println(imageIndex);
   //Image show time
@@ -194,42 +227,110 @@ void show4Images(PImage img, int I) {
   }
 }
 
+
+//MODE 4
 void showCollage(PImage img, int I){
   
   //float horizontalCorrection = 0.02;
-  switch(I%6) {
+  println("case_num: " + case_num + ", img_number: " + I);
+  
+  
+  switch(case_num) {
   case 0:
-    println("case 0");
+    //println("case 0");
     img.resize((int)(imageWidth*boarderSize*0.4), (int)(imageHeight*boarderSize*0.4));
     image(img, width/3, height/3);
+    case_num++;
     break;
   case 1:
-    println("case 1");
+    //println("case 1");
     img.resize((int)(imageWidth*boarderSize*0.35), (int)(imageHeight*boarderSize*0.35));
     image(img, 1.5*width/3, 2.3*height/3);
+    case_num++;
     break;
   case 2:
-    println("case 2");
+    //println("case 2");
     img.resize((int)(imageWidth*boarderSize*0.25), (int)(imageHeight*boarderSize*0.25));
     image(img, 1.43*width/2, 1.2*height/4);    
+    case_num++;
     break;
   case 3:
-    println("case 3");
+    //println("case 3");
     img.resize((int)(imageWidth*boarderSize*0.2), (int)(imageHeight*boarderSize*0.2));
     image(img, 1.73*width/2, 2.5*height/4);
+    case_num++;
     break;
-  
   case 4:
-    println("case 4");
+   //println("case 4");
     img.resize((int)(imageWidth*boarderSize*0.15), (int)(imageHeight*boarderSize*0.15));
     image(img, 0.15*width, 2.7*height/4);
+    case_num++;
     break;
-  
   case 5:
-    println("case 5");
+    //println("case 5");
     img.resize((int)(imageWidth*boarderSize*0.16), (int)(imageHeight*boarderSize*0.16));
-    image(img, 0.26*width, 3.5*height/4);
+    image(img, 0.2*width, 3.5*height/4);
+    case_num = 0;
     break;
   }
 
+}
+
+///MODE 5
+void show9Images(PImage img, int I) {
+  println("I: " + I + " case_num: " + case_num);
+  img.resize(int(img_w), int(img_h));
+  float offset = 120.;
+  switch(case_num) {
+  // row one
+  case 0:
+    println("case 0");
+    image(img, l_r_margin+offset, t_b_margin);
+    case_num++;
+    break;
+  case 1:
+    println("case 1");
+    image(img, l_r_margin+offset + 1 * (img_w + spacing), t_b_margin);
+    case_num++;
+    break;
+  case 2:
+    println("case 2");
+    image(img, l_r_margin+offset + 2 * (img_w + spacing), t_b_margin);
+    case_num++;
+    break;
+  
+  // row two
+  case 3:
+    println("case 0");
+    image(img, l_r_margin+offset, t_b_margin + 1 * (img_h + spacing));
+    case_num++;
+    break;
+  case 4:
+    println("case 1");
+    image(img, l_r_margin+offset + 1 * (img_w + spacing), t_b_margin + 1 * (img_h + spacing));
+    case_num++;
+    break;
+  case 5:
+    println("case 2");
+    image(img, l_r_margin+offset + 2 * (img_w + spacing), t_b_margin + 1 * (img_h + spacing));
+    case_num++;
+    break;
+ 
+  // row three
+  case 6:
+    println("case 0");
+    image(img, l_r_margin+offset, t_b_margin + 2 * (img_h + spacing));
+    case_num++;
+    break;
+  case 7:
+    println("case 1");
+    image(img, l_r_margin + offset+ 1 * (img_w + spacing), t_b_margin + 2 * (img_h + spacing));
+    case_num++;
+    break;
+  case 8:
+    println("case 2");
+    image(img, l_r_margin+offset + 2 * (img_w + spacing), t_b_margin + 2 * (img_h + spacing));
+    case_num = 0;
+    break;
+  }
 }
